@@ -1,0 +1,357 @@
+{
+  "rubric": {
+    "scale": {
+      "content_accuracy": 25,
+      "evidence_traceability": 25,
+      "experiment_understanding": 20,
+      "qa_boundaries": 15,
+      "readability": 10,
+      "template_completeness": 5
+    },
+    "target_average": 85,
+    "minimum_evidence_score": 20,
+    "automatic_checks_do_not_replace_semantic_review": true,
+    "review_scope": "本次六篇原创合成样本的主 Agent 内部语义复核，不是独立人类盲评，也不代表真实论文普遍效果",
+    "veto_failures": [
+      "伪造为真实研究或外部来源",
+      "不同论文的信息串线",
+      "引文存在但不支持关键结论",
+      "不可回答问题被编造",
+      "解析失败后伪装完整阅读"
+    ]
+  },
+  "gold": [
+    {
+      "paper_id": "paper01",
+      "title": "LatticeFlow: Budgeted State Routing for Synthetic Stream Forecasting",
+      "expected": {
+        "research_question": "在固定调度约束下预测虚构事件流的下一状态",
+        "method": [
+          "LatticeFlow",
+          "s_t = (1 - g_t) * r_t + g_t * q_t;  g_t = sigmoid(w * b_t + v * d_t)",
+          "Read event x_t, gap flag d_t, and remaining budget b_t."
+        ],
+        "datasets": [
+          "RiverLoop-24",
+          "HarborMist-18"
+        ],
+        "metrics": [
+          "NMAE",
+          "latency in milliseconds"
+        ],
+        "key_result": "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms",
+        "ablation_result": "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差",
+        "evidence_pages": [
+          1,
+          2
+        ],
+        "evidence_boundary": "结果只来自虚构事件流，不能证明真实河流、港口或其他现实系统同样受益",
+        "data_origin": "Original synthetic test paper; all methods, datasets, experiments, and references are fictional"
+      },
+      "factual_questions": [
+        "该方法的核心机制是什么？",
+        "两个虚构测试集上的主要结果是什么？",
+        "定义组件消融显示了什么？"
+      ],
+      "unanswerable_questions": [
+        "LatticeFlow 是否已经在真实部署环境中证明有效？",
+        "LatticeFlow 是否在所有任务和所有参数下都优于其他方法？"
+      ],
+      "reviewer": "主 Agent 根据最终 PDF 物理页提取文本逐条语义复核"
+    },
+    {
+      "paper_id": "paper02",
+      "title": "PrismCache: Confidence-Gated Memory for Synthetic Stream Forecasting",
+      "expected": {
+        "research_question": "在固定调度约束下预测虚构事件流的下一状态",
+        "method": [
+          "PrismCache",
+          "m_t = sum_i softmax(c_t * a_i) * v_i;  y_t = h_t + lambda_t * m_t",
+          "Encode the current partial history into h_t."
+        ],
+        "datasets": [
+          "RiverLoop-24",
+          "HarborMist-18"
+        ],
+        "metrics": [
+          "NMAE",
+          "latency in milliseconds"
+        ],
+        "key_result": "PrismCache 在 RiverLoop-24/HarborMist-18 上分别取得 0.179/0.196 NMAE，平均延迟为 12.4 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms",
+        "ablation_result": "移除置信门控后，NMAE 变为 0.196/0.214，延迟为 12.1 ms，说明无筛选记忆会损害这两个测试集上的误差",
+        "evidence_pages": [
+          1,
+          2
+        ],
+        "evidence_boundary": "实验仅支持虚构流上的记忆门控效果，不能外推到真实医疗、金融或公共数据",
+        "data_origin": "Original synthetic test paper; all methods, datasets, experiments, and references are fictional"
+      },
+      "factual_questions": [
+        "该方法的核心机制是什么？",
+        "两个虚构测试集上的主要结果是什么？",
+        "定义组件消融显示了什么？"
+      ],
+      "unanswerable_questions": [
+        "PrismCache 是否已经在真实部署环境中证明有效？",
+        "PrismCache 是否在所有任务和所有参数下都优于其他方法？"
+      ],
+      "reviewer": "主 Agent 根据最终 PDF 物理页提取文本逐条语义复核"
+    },
+    {
+      "paper_id": "paper03",
+      "title": "TempoWeave: Cycle-Aware Adaptation for Synthetic Stream Forecasting",
+      "expected": {
+        "research_question": "在固定调度约束下预测虚构事件流的下一状态",
+        "method": [
+          "TempoWeave",
+          "p_t = alpha * p_short + (1 - alpha) * p_long;  u_t = x_t + gamma * cos(p_t)",
+          "Estimate short and long cycle coordinates from the fabricated history."
+        ],
+        "datasets": [
+          "RiverLoop-24",
+          "HarborMist-18"
+        ],
+        "metrics": [
+          "NMAE",
+          "latency in milliseconds"
+        ],
+        "key_result": "TempoWeave 在 RiverLoop-24/HarborMist-18 上分别取得 0.187/0.203 NMAE，平均延迟为 10.6 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms",
+        "ablation_result": "移除周期编码后，NMAE 变为 0.211/0.225，延迟为 10.2 ms，支持周期坐标在这两个虚构任务中的作用",
+        "evidence_pages": [
+          1,
+          2
+        ],
+        "evidence_boundary": "结论仅覆盖虚构周期扰动，不足以证明任意真实周期或完全非周期场景有效",
+        "data_origin": "Original synthetic test paper; all methods, datasets, experiments, and references are fictional"
+      },
+      "factual_questions": [
+        "该方法的核心机制是什么？",
+        "两个虚构测试集上的主要结果是什么？",
+        "定义组件消融显示了什么？"
+      ],
+      "unanswerable_questions": [
+        "TempoWeave 是否已经在真实部署环境中证明有效？",
+        "TempoWeave 是否在所有任务和所有参数下都优于其他方法？"
+      ],
+      "reviewer": "主 Agent 根据最终 PDF 物理页提取文本逐条语义复核"
+    },
+    {
+      "paper_id": "paper04",
+      "title": "MosaicField: Region-Consistent Compression for Synthetic Sensor Maps",
+      "expected": {
+        "research_question": "在虚构比特预算下压缩并重建带区域边界的传感器地图",
+        "method": [
+          "MosaicField",
+          "L = mean((x - x_hat)^2) + beta * mean((b_left - b_right)^2)",
+          "Partition each fabricated map into adaptive rectangular tiles."
+        ],
+        "datasets": [
+          "GridQuarry-32",
+          "CavernTone-20"
+        ],
+        "metrics": [
+          "PSNR in dB",
+          "synthetic kilobits per map"
+        ],
+        "key_result": "MosaicField 在 GridQuarry-32/CavernTone-20 上分别取得 31.4/30.8 dB PSNR，开销为 36.0/38.0 kb；UniformTile 为 28.6/27.9 dB 与 42.0/45.0 kb",
+        "ablation_result": "移除接缝损失后，PSNR 降为 30.1/29.5 dB，开销为 36.2/38.2 kb，支持边界约束对重建质量的贡献",
+        "evidence_pages": [
+          1,
+          2
+        ],
+        "evidence_boundary": "虚构地图结果不能证明医学影像诊断、真实地理测绘或通用无损压缩有效",
+        "data_origin": "Original synthetic test paper; all methods, datasets, experiments, and references are fictional"
+      },
+      "factual_questions": [
+        "该方法的核心机制是什么？",
+        "两个虚构测试集上的主要结果是什么？",
+        "定义组件消融显示了什么？"
+      ],
+      "unanswerable_questions": [
+        "MosaicField 是否已经在真实部署环境中证明有效？",
+        "MosaicField 是否在所有任务和所有参数下都优于其他方法？"
+      ],
+      "reviewer": "主 Agent 根据最终 PDF 物理页提取文本逐条语义复核"
+    },
+    {
+      "paper_id": "paper05",
+      "title": "ChorusLens: Multi-View Alignment for Synthetic Gesture Episodes",
+      "expected": {
+        "research_question": "在可见性不一致的虚构多视角手势片段中恢复同步关系",
+        "method": [
+          "ChorusLens",
+          "A = sum_v mask_v * (z_v - a_v)^2 / sum_v mask_v;  S = 1 - normalized(A)",
+          "Extract a synthetic track from each available view."
+        ],
+        "datasets": [
+          "GestureOrbit-60",
+          "StudioDrift-36"
+        ],
+        "metrics": [
+          "view-consistency error",
+          "synchronization F1"
+        ],
+        "key_result": "ChorusLens 在两个测试集上的视角一致性误差为 0.173/0.189，同步 F1 为 0.887/0.871；IndependentPose 的误差为 0.248/0.271，F1 为 0.812/0.788",
+        "ablation_result": "移除共享对齐令牌后，误差变为 0.221/0.239，F1 变为 0.846/0.825，两个指标均弱于完整方法",
+        "evidence_pages": [
+          1,
+          2
+        ],
+        "evidence_boundary": "合成手势不包含真实身份或真实人体采集数据，不能据此主张身份识别或任意遮挡条件下的可靠性",
+        "data_origin": "Original synthetic test paper; all methods, datasets, experiments, and references are fictional"
+      },
+      "factual_questions": [
+        "该方法的核心机制是什么？",
+        "两个虚构测试集上的主要结果是什么？",
+        "定义组件消融显示了什么？"
+      ],
+      "unanswerable_questions": [
+        "ChorusLens 是否已经在真实部署环境中证明有效？",
+        "ChorusLens 是否在所有任务和所有参数下都优于其他方法？"
+      ],
+      "reviewer": "主 Agent 根据最终 PDF 物理页提取文本逐条语义复核"
+    },
+    {
+      "paper_id": "paper06",
+      "title": "DeltaPilot: Stability-Constrained Tuning for Synthetic Control Traces",
+      "expected": {
+        "research_question": "在虚构控制轨迹调参中同时降低约束违反率与稳定所需步数",
+        "method": [
+          "DeltaPilot",
+          "J(theta) = C_settle + mu * max(0, V(theta) - v_max);  theta_new = project(theta + step)",
+          "Roll out the current controller on a fabricated training trace."
+        ],
+        "datasets": [
+          "PendulumWorks-50",
+          "ReactorToy-45"
+        ],
+        "metrics": [
+          "violation rate in percent",
+          "settling steps"
+        ],
+        "key_result": "DeltaPilot 在两个测试集上的违反率为 3.2%/3.8%，稳定步数为 58/63；FreeTune 为 8.7%/9.4% 与 74/81 步",
+        "ablation_result": "移除稳定屏障后，违反率升至 6.9%/7.5%，稳定步数变为 61/66，支持屏障在虚构任务中的约束作用",
+        "evidence_pages": [
+          1,
+          2
+        ],
+        "evidence_boundary": "结果不构成真实反应堆、机器人或一般非线性系统的安全证明，也不能替代形式化验证",
+        "data_origin": "Original synthetic test paper; all methods, datasets, experiments, and references are fictional"
+      },
+      "factual_questions": [
+        "该方法的核心机制是什么？",
+        "两个虚构测试集上的主要结果是什么？",
+        "定义组件消融显示了什么？"
+      ],
+      "unanswerable_questions": [
+        "DeltaPilot 是否已经在真实部署环境中证明有效？",
+        "DeltaPilot 是否在所有任务和所有参数下都优于其他方法？"
+      ],
+      "reviewer": "主 Agent 根据最终 PDF 物理页提取文本逐条语义复核"
+    }
+  ],
+  "reviews": [
+    {
+      "paper_id": "paper01",
+      "status": "completed",
+      "reviewer_type": "主 Agent 内部逐条语义复核，非独立人类盲评或外部专家评审",
+      "scores": {
+        "content_accuracy": 24,
+        "evidence_traceability": 24,
+        "experiment_understanding": 19,
+        "qa_boundaries": 15,
+        "readability": 9,
+        "template_completeness": 5
+      },
+      "total": 96,
+      "veto_failure": false,
+      "passed": true,
+      "notes": "研究问题、路由公式、两项数据集结果与消融均有连续证据；真实部署问题明确拒答。"
+    },
+    {
+      "paper_id": "paper02",
+      "status": "completed",
+      "reviewer_type": "主 Agent 内部逐条语义复核，非独立人类盲评或外部专家评审",
+      "scores": {
+        "content_accuracy": 24,
+        "evidence_traceability": 24,
+        "experiment_understanding": 19,
+        "qa_boundaries": 15,
+        "readability": 9,
+        "template_completeness": 5
+      },
+      "total": 96,
+      "veto_failure": false,
+      "passed": true,
+      "notes": "记忆门控与主表数值一致；压力条件没有混入主结果，真实应用外推被清楚阻断。"
+    },
+    {
+      "paper_id": "paper03",
+      "status": "completed",
+      "reviewer_type": "主 Agent 内部逐条语义复核，非独立人类盲评或外部专家评审",
+      "scores": {
+        "content_accuracy": 24,
+        "evidence_traceability": 24,
+        "experiment_understanding": 19,
+        "qa_boundaries": 15,
+        "readability": 9,
+        "template_completeness": 5
+      },
+      "total": 96,
+      "veto_failure": false,
+      "passed": true,
+      "notes": "周期机制和消融语义匹配；三篇对比保留调参预算差异，没有形成普遍排行榜。"
+    },
+    {
+      "paper_id": "paper04",
+      "status": "completed",
+      "reviewer_type": "主 Agent 内部逐条语义复核，非独立人类盲评或外部专家评审",
+      "scores": {
+        "content_accuracy": 23,
+        "evidence_traceability": 24,
+        "experiment_understanding": 19,
+        "qa_boundaries": 15,
+        "readability": 9,
+        "template_completeness": 5
+      },
+      "total": 95,
+      "veto_failure": false,
+      "passed": true,
+      "notes": "PSNR 与开销方向区分正确；真实医学和地理用途均标记证据不足。"
+    },
+    {
+      "paper_id": "paper05",
+      "status": "completed",
+      "reviewer_type": "主 Agent 内部逐条语义复核，非独立人类盲评或外部专家评审",
+      "scores": {
+        "content_accuracy": 23,
+        "evidence_traceability": 24,
+        "experiment_understanding": 18,
+        "qa_boundaries": 15,
+        "readability": 9,
+        "template_completeness": 5
+      },
+      "total": 94,
+      "veto_failure": false,
+      "passed": true,
+      "notes": "多视角误差和 F1 未混淆，扩展附录已覆盖；复杂协议的独立复现仍未验证。"
+    },
+    {
+      "paper_id": "paper06",
+      "status": "completed",
+      "reviewer_type": "主 Agent 内部逐条语义复核，非独立人类盲评或外部专家评审",
+      "scores": {
+        "content_accuracy": 24,
+        "evidence_traceability": 24,
+        "experiment_understanding": 19,
+        "qa_boundaries": 15,
+        "readability": 9,
+        "template_completeness": 5
+      },
+      "total": 96,
+      "veto_failure": false,
+      "passed": true,
+      "notes": "违反率与稳定步数前后一致；真实安全和一般非线性证明问题均明确证据不足。"
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "settings": {
+    "reading_depth": "full",
+    "language": "zh-CN",
+    "max_pdf_pages": 200,
+    "max_context_characters": 24000,
+    "max_quote_characters": 500,
+    "min_page_characters": 100,
+    "max_parallel_agents": 3,
+    "evidence_required": true,
+    "output_format": "markdown"
+  },
+  "reading_note_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": [
+      "paper_id",
+      "title",
+      "reading_depth",
+      "coverage",
+      "research_question",
+      "summary",
+      "methods",
+      "experiments",
+      "contributions",
+      "limitations",
+      "claims",
+      "warnings",
+      "uncertainties"
+    ],
+    "properties": {
+      "paper_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "title": {
+        "type": "string"
+      },
+      "reading_depth": {
+        "enum": [
+          "quick",
+          "full",
+          "group_meeting"
+        ]
+      },
+      "coverage": {
+        "type": "string",
+        "minLength": 1
+      },
+      "research_question": {
+        "type": "string",
+        "minLength": 1
+      },
+      "summary": {
+        "type": "string"
+      },
+      "methods": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "experiments": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "contributions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "claims": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "statement",
+            "statement_type",
+            "section",
+            "evidence"
+          ],
+          "properties": {
+            "statement": {
+              "type": "string",
+              "minLength": 1
+            },
+            "statement_type": {
+              "enum": [
+                "paper_fact",
+                "author_claim",
+                "experiment_result",
+                "agent_inference"
+              ]
+            },
+            "section": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "page",
+                  "quote"
+                ],
+                "properties": {
+                  "page": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "section": {
+                    "type": "string"
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "warnings": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "uncertainties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "additionalProperties": true
+  },
+  "subagent_result_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": [
+      "paper_id",
+      "task_type",
+      "findings",
+      "unread_sections",
+      "failures"
+    ],
+    "properties": {
+      "paper_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "task_type": {
+        "enum": [
+          "method_reading",
+          "experiment_reading",
+          "critical_review",
+          "single_paper",
+          "evidence_review"
+        ]
+      },
+      "findings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "claim",
+            "section",
+            "evidence",
+            "statement_type",
+            "uncertainty"
+          ],
+          "properties": {
+            "claim": {
+              "type": "string",
+              "minLength": 1
+            },
+            "section": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "page",
+                  "quote"
+                ],
+                "properties": {
+                  "page": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                }
+              }
+            },
+            "statement_type": {
+              "enum": [
+                "paper_fact",
+                "author_claim",
+                "experiment_result",
+                "agent_inference"
+              ]
+            },
+            "uncertainty": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "unread_sections": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "failures": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

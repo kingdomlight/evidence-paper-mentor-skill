@@ -1,0 +1,3392 @@
+{
+  "schema_version": 1,
+  "notes": [
+    {
+      "paper_id": "paper01",
+      "title": "LatticeFlow: Budgeted State Routing for Synthetic Stream Forecasting",
+      "reading_depth": "full",
+      "coverage": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+      "research_question": "在固定调度约束下预测虚构事件流的下一状态。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+      "summary": "这篇 Original synthetic test paper 提出虚构方法 LatticeFlow：预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合。实验使用RiverLoop-24 与 HarborMist-18，指标为归一化平均绝对误差（NMAE，越低越好）与平均调度延迟（毫秒）。LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差。结果只来自虚构事件流，不能证明真实河流、港口或其他现实系统同样受益。",
+      "methods": [
+        {
+          "name": "LatticeFlow",
+          "section": "3 Method",
+          "pages": [
+            1
+          ],
+          "input_output": "输入为synthetic event-stream forecasting中的虚构样本，输出为任务特定估计；不产生任何真实系统结论。",
+          "steps": [
+            "预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合",
+            "s_t = (1 - g_t) * r_t + g_t * q_t;  g_t = sigmoid(w * b_t + v * d_t)",
+            "Read event x_t, gap flag d_t, and remaining budget b_t.",
+            "Blend r_t and q_t with gate g_t and emit the next-state estimate."
+          ],
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "LatticeFlow implements the following mechanism: a budget router selects between a lightweight running state and a refined state, then blends both states according to observed gap severity."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "s_t = (1 - g_t) * r_t + g_t * q_t; g_t = sigmoid(w * b_t + v * d_t)"
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "1: Read event x_t, gap flag d_t, and remaining budget b_t."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "4: Blend r_t and q_t with gate g_t and emit the next-state estimate."
+            }
+          ]
+        },
+        {
+          "name": "受控训练与评估协议",
+          "section": "3 Method; 4 Experiments; 6 Discussion; Appendix",
+          "pages": [
+            2
+          ],
+          "input_output": "固定虚构数据划分和随机种子，输出主结果、消融结果和单独的压力测试结果。",
+          "steps": [
+            "验证集从 12 次试验中选择配置。",
+            "主表使用 17、29、43 三个虚构随机种子的算术平均。",
+            "压力测试单独报告，不与主测试集混合。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "3 Method",
+              "quote": "Training uses a fixed synthetic schedule with 12 validation trials."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            },
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "Under a stress shift that doubles gap frequency, LatticeFlow records 0.226 NMAE on RiverLoop-24 and 0.241 on HarborMist-18; these stress values are not mixed with the main test table."
+            }
+          ]
+        }
+      ],
+      "experiments": [
+        {
+          "name": "双数据集主实验",
+          "section": "4 Experiments; 5 Results",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18",
+          "datasets": [
+            "RiverLoop-24",
+            "HarborMist-18"
+          ],
+          "baselines": [
+            "FixedGate",
+            "WindowMean"
+          ],
+          "metrics": [
+            "NMAE",
+            "latency in milliseconds"
+          ],
+          "setup": "相同测试分区与输入历史；三个虚构种子；主指标为 NMAE，辅助测量为 latency in milliseconds。",
+          "results": [
+            "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "LatticeFlow 0.184 0.201 11.8"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FixedGate 0.231 0.248 8.0"
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            }
+          ]
+        },
+        {
+          "name": "定义组件消融",
+          "section": "6 Discussion; Table 2",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18",
+          "datasets": [
+            "RiverLoop-24",
+            "HarborMist-18"
+          ],
+          "baselines": [
+            "NoRouter"
+          ],
+          "metrics": [
+            "NMAE",
+            "latency in milliseconds"
+          ],
+          "setup": "仅移除论文定义的组件，其他虚构训练计划保持一致。",
+          "results": [
+            "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "LatticeFlow 0.184 0.201 11.8"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoRouter 0.207 0.222 10.9"
+            }
+          ]
+        },
+        {
+          "name": "独立压力条件",
+          "section": "6 Discussion",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18 的单独压力划分",
+          "datasets": [
+            "RiverLoop-24 stress split",
+            "HarborMist-18 stress split"
+          ],
+          "baselines": [
+            "不与主表混合"
+          ],
+          "metrics": [
+            "NMAE"
+          ],
+          "setup": "只改变一个虚构生成器属性，标准测试结果保持不变。",
+          "results": [
+            "Under a stress shift that doubles gap frequency, LatticeFlow records 0.226 NMAE on RiverLoop-24 and 0.241 on HarborMist-18; these stress values are not mixed with the main test table."
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "Under a stress shift that doubles gap frequency, LatticeFlow records 0.226 NMAE on RiverLoop-24 and 0.241 on HarborMist-18; these stress values are not mixed with the main test table."
+            }
+          ]
+        }
+      ],
+      "contributions": [
+        "原创构造 LatticeFlow 的虚构计算流程、ASCII 公式与算法步骤，并在物理页 [1] 提供证据。",
+        "为RiverLoop-24 与 HarborMist-18设计一致的训练/验证/测试协议，主结果和消融结果均有连续表格行证据，论文正文另报告对应结果。",
+        "明确声明全部方法、数据、实验和参考文献为合成内容，并把真实应用外推列为证据不足。"
+      ],
+      "limitations": [
+        {
+          "statement": "The study uses only synthetic event streams, so the experiments do not establish effectiveness on real rivers, harbors, or deployed monitoring systems.",
+          "type": "author_claim",
+          "statement_type": "author_claim",
+          "section": "7 Limitations",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The study uses only synthetic event streams, so the experiments do not establish effectiveness on real rivers, harbors, or deployed monitoring systems."
+            }
+          ]
+        },
+        {
+          "statement": "分析推断：没有独立实现、真实硬件、显著性检验或外部专家复核，因此不能把这些虚构结果解释为实际部署、安全性或普遍优越性证据。",
+          "type": "agent_inference",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The study uses only synthetic event streams, so the experiments do not establish effectiveness on real rivers, harbors, or deployed monitoring systems."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, LatticeFlow is a promising design rather than evidence of universal superiority."
+            },
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The evaluation also lacks independent implementation, real hardware, external reviewers, and statistical significance tests."
+            }
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "statement": "研究问题：在固定调度约束下预测虚构事件流的下一状态；原文将目标限定为受控合成环境中的方法比较。",
+          "statement_type": "paper_fact",
+          "section": "1 Introduction",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "This paper asks whether explicit budget routing can balance forecasting error and scheduling delay on discontinuous synthetic streams."
+            },
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: a budget router selects between a lightweight running state and a refined state, then blends both states according to observed gap severity."
+            }
+          ]
+        },
+        {
+          "statement": "方法：预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合；公式给出了对应的合成计算。",
+          "statement_type": "paper_fact",
+          "section": "3 Method",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "LatticeFlow implements the following mechanism: a budget router selects between a lightweight running state and a refined state, then blends both states according to observed gap severity."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "s_t = (1 - g_t) * r_t + g_t * q_t; g_t = sigmoid(w * b_t + v * d_t)"
+            }
+          ]
+        },
+        {
+          "statement": "实验使用RiverLoop-24 与 HarborMist-18，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+          "statement_type": "paper_fact",
+          "section": "4 Experiments",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            }
+          ]
+        },
+        {
+          "statement": "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+          "statement_type": "experiment_result",
+          "section": "5 Results; Table 1",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "LatticeFlow 0.184 0.201 11.8"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FixedGate 0.231 0.248 8.0"
+            }
+          ]
+        },
+        {
+          "statement": "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差。",
+          "statement_type": "experiment_result",
+          "section": "6 Discussion; Table 2",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "LatticeFlow 0.184 0.201 11.8"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoRouter 0.207 0.222 10.9"
+            }
+          ]
+        },
+        {
+          "statement": "证据边界：结果只来自虚构事件流，不能证明真实河流、港口或其他现实系统同样受益。",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The study uses only synthetic event streams, so the experiments do not establish effectiveness on real rivers, harbors, or deployed monitoring systems."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, LatticeFlow is a promising design rather than evidence of universal superiority."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "这是本项目原创生成的 Original synthetic test paper，不是现实研究发现，也不能用于证明真实论文上的普遍阅读效果。",
+        "公式和表格虽为文本型 PDF，提取后仍可能丢失视觉行列关系；笔记只采用能在对应物理页连续匹配的文本。",
+        "自动证据校验只检查页码和连续文本匹配，语义支持由主 Agent 另行复核。"
+      ],
+      "uncertainties": [
+        "未进行真实数据采集、独立实现、真实硬件测量或统计显著性检验，因此现实有效性未知。",
+        "虚构参考文献仅用于解析展示，不代表可检索的真实出版物。"
+      ],
+      "reproduction": {
+        "data": "全部由本项目虚构生成，无外部数据",
+        "seeds": [
+          17,
+          29,
+          43
+        ],
+        "validation_trials": 12,
+        "code": "论文内仅有伪代码，未声称提供可执行实现",
+        "hardware": "未使用真实硬件测量"
+      }
+    },
+    {
+      "paper_id": "paper02",
+      "title": "PrismCache: Confidence-Gated Memory for Synthetic Stream Forecasting",
+      "reading_depth": "full",
+      "coverage": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+      "research_question": "在固定调度约束下预测虚构事件流的下一状态。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+      "summary": "这篇 Original synthetic test paper 提出虚构方法 PrismCache：置信门控记忆对原型状态进行加权检索，并在相似度与时效性不一致时抑制记忆残差。实验使用RiverLoop-24 与 HarborMist-18，指标为归一化平均绝对误差（NMAE，越低越好）与平均调度延迟（毫秒）。PrismCache 在 RiverLoop-24/HarborMist-18 上分别取得 0.179/0.196 NMAE，平均延迟为 12.4 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。移除置信门控后，NMAE 变为 0.196/0.214，延迟为 12.1 ms，说明无筛选记忆会损害这两个测试集上的误差。实验仅支持虚构流上的记忆门控效果，不能外推到真实医疗、金融或公共数据。",
+      "methods": [
+        {
+          "name": "PrismCache",
+          "section": "3 Method",
+          "pages": [
+            1
+          ],
+          "input_output": "输入为synthetic event-stream forecasting中的虚构样本，输出为任务特定估计；不产生任何真实系统结论。",
+          "steps": [
+            "置信门控记忆对原型状态进行加权检索，并在相似度与时效性不一致时抑制记忆残差",
+            "m_t = sum_i softmax(c_t * a_i) * v_i;  y_t = h_t + lambda_t * m_t",
+            "Encode the current partial history into h_t.",
+            "Add the gated memory residual and produce the next-state estimate."
+          ],
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "PrismCache implements the following mechanism: a small memory stores prototype states, while a confidence gate suppresses retrievals whose similarity and recency scores disagree."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "m_t = sum_i softmax(c_t * a_i) * v_i; y_t = h_t + lambda_t * m_t"
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "1: Encode the current partial history into h_t."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "4: Add the gated memory residual and produce the next-state estimate."
+            }
+          ]
+        },
+        {
+          "name": "受控训练与评估协议",
+          "section": "3 Method; 4 Experiments; 6 Discussion; Appendix",
+          "pages": [
+            2
+          ],
+          "input_output": "固定虚构数据划分和随机种子，输出主结果、消融结果和单独的压力测试结果。",
+          "steps": [
+            "验证集从 16 次试验中选择配置。",
+            "主表使用 17、29、43 三个虚构随机种子的算术平均。",
+            "压力测试单独报告，不与主测试集混合。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "3 Method",
+              "quote": "Training uses a fixed synthetic schedule with 16 validation trials."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            },
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "When memory prototypes are stale by twelve synthetic episodes, PrismCache records 0.224 NMAE on RiverLoop-24 and 0.237 on HarborMist-18; this separate condition does not alter the main results."
+            }
+          ]
+        }
+      ],
+      "experiments": [
+        {
+          "name": "双数据集主实验",
+          "section": "4 Experiments; 5 Results",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18",
+          "datasets": [
+            "RiverLoop-24",
+            "HarborMist-18"
+          ],
+          "baselines": [
+            "FixedGate",
+            "WindowMean"
+          ],
+          "metrics": [
+            "NMAE",
+            "latency in milliseconds"
+          ],
+          "setup": "相同测试分区与输入历史；三个虚构种子；主指标为 NMAE，辅助测量为 latency in milliseconds。",
+          "results": [
+            "PrismCache 在 RiverLoop-24/HarborMist-18 上分别取得 0.179/0.196 NMAE，平均延迟为 12.4 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "PrismCache 0.179 0.196 12.4"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FixedGate 0.231 0.248 8.0"
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            }
+          ]
+        },
+        {
+          "name": "定义组件消融",
+          "section": "6 Discussion; Table 2",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18",
+          "datasets": [
+            "RiverLoop-24",
+            "HarborMist-18"
+          ],
+          "baselines": [
+            "NoConfidenceGate"
+          ],
+          "metrics": [
+            "NMAE",
+            "latency in milliseconds"
+          ],
+          "setup": "仅移除论文定义的组件，其他虚构训练计划保持一致。",
+          "results": [
+            "移除置信门控后，NMAE 变为 0.196/0.214，延迟为 12.1 ms，说明无筛选记忆会损害这两个测试集上的误差。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "PrismCache 0.179 0.196 12.4"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoConfidenceGate 0.196 0.214 12.1"
+            }
+          ]
+        },
+        {
+          "name": "独立压力条件",
+          "section": "6 Discussion",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18 的单独压力划分",
+          "datasets": [
+            "RiverLoop-24 stress split",
+            "HarborMist-18 stress split"
+          ],
+          "baselines": [
+            "不与主表混合"
+          ],
+          "metrics": [
+            "NMAE"
+          ],
+          "setup": "只改变一个虚构生成器属性，标准测试结果保持不变。",
+          "results": [
+            "When memory prototypes are stale by twelve synthetic episodes, PrismCache records 0.224 NMAE on RiverLoop-24 and 0.237 on HarborMist-18; this separate condition does not alter the main results."
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "When memory prototypes are stale by twelve synthetic episodes, PrismCache records 0.224 NMAE on RiverLoop-24 and 0.237 on HarborMist-18; this separate condition does not alter the main results."
+            }
+          ]
+        }
+      ],
+      "contributions": [
+        "原创构造 PrismCache 的虚构计算流程、ASCII 公式与算法步骤，并在物理页 [1] 提供证据。",
+        "为RiverLoop-24 与 HarborMist-18设计一致的训练/验证/测试协议，主结果和消融结果均有连续表格行证据，论文正文另报告对应结果。",
+        "明确声明全部方法、数据、实验和参考文献为合成内容，并把真实应用外推列为证据不足。"
+      ],
+      "limitations": [
+        {
+          "statement": "The memory study is confined to fabricated sequences and cannot establish safety or effectiveness for clinical, financial, or public-sector records.",
+          "type": "author_claim",
+          "statement_type": "author_claim",
+          "section": "7 Limitations",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The memory study is confined to fabricated sequences and cannot establish safety or effectiveness for clinical, financial, or public-sector records."
+            }
+          ]
+        },
+        {
+          "statement": "分析推断：没有独立实现、真实硬件、显著性检验或外部专家复核，因此不能把这些虚构结果解释为实际部署、安全性或普遍优越性证据。",
+          "type": "agent_inference",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The memory study is confined to fabricated sequences and cannot establish safety or effectiveness for clinical, financial, or public-sector records."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, PrismCache is a promising design rather than evidence of universal superiority."
+            },
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The evaluation also lacks independent implementation, real hardware, external reviewers, and statistical significance tests."
+            }
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "statement": "研究问题：在固定调度约束下预测虚构事件流的下一状态；原文将目标限定为受控合成环境中的方法比较。",
+          "statement_type": "paper_fact",
+          "section": "1 Introduction",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "This paper asks whether a confidence-gated episodic memory can reduce forecasting error without allowing uncertain memories to dominate the current state."
+            },
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: a small memory stores prototype states, while a confidence gate suppresses retrievals whose similarity and recency scores disagree."
+            }
+          ]
+        },
+        {
+          "statement": "方法：置信门控记忆对原型状态进行加权检索，并在相似度与时效性不一致时抑制记忆残差；公式给出了对应的合成计算。",
+          "statement_type": "paper_fact",
+          "section": "3 Method",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "PrismCache implements the following mechanism: a small memory stores prototype states, while a confidence gate suppresses retrievals whose similarity and recency scores disagree."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "m_t = sum_i softmax(c_t * a_i) * v_i; y_t = h_t + lambda_t * m_t"
+            }
+          ]
+        },
+        {
+          "statement": "实验使用RiverLoop-24 与 HarborMist-18，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+          "statement_type": "paper_fact",
+          "section": "4 Experiments",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            }
+          ]
+        },
+        {
+          "statement": "PrismCache 在 RiverLoop-24/HarborMist-18 上分别取得 0.179/0.196 NMAE，平均延迟为 12.4 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+          "statement_type": "experiment_result",
+          "section": "5 Results; Table 1",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "PrismCache 0.179 0.196 12.4"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FixedGate 0.231 0.248 8.0"
+            }
+          ]
+        },
+        {
+          "statement": "移除置信门控后，NMAE 变为 0.196/0.214，延迟为 12.1 ms，说明无筛选记忆会损害这两个测试集上的误差。",
+          "statement_type": "experiment_result",
+          "section": "6 Discussion; Table 2",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "PrismCache 0.179 0.196 12.4"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoConfidenceGate 0.196 0.214 12.1"
+            }
+          ]
+        },
+        {
+          "statement": "证据边界：实验仅支持虚构流上的记忆门控效果，不能外推到真实医疗、金融或公共数据。",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The memory study is confined to fabricated sequences and cannot establish safety or effectiveness for clinical, financial, or public-sector records."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, PrismCache is a promising design rather than evidence of universal superiority."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "这是本项目原创生成的 Original synthetic test paper，不是现实研究发现，也不能用于证明真实论文上的普遍阅读效果。",
+        "公式和表格虽为文本型 PDF，提取后仍可能丢失视觉行列关系；笔记只采用能在对应物理页连续匹配的文本。",
+        "自动证据校验只检查页码和连续文本匹配，语义支持由主 Agent 另行复核。"
+      ],
+      "uncertainties": [
+        "未进行真实数据采集、独立实现、真实硬件测量或统计显著性检验，因此现实有效性未知。",
+        "虚构参考文献仅用于解析展示，不代表可检索的真实出版物。"
+      ],
+      "reproduction": {
+        "data": "全部由本项目虚构生成，无外部数据",
+        "seeds": [
+          17,
+          29,
+          43
+        ],
+        "validation_trials": 16,
+        "code": "论文内仅有伪代码，未声称提供可执行实现",
+        "hardware": "未使用真实硬件测量"
+      }
+    },
+    {
+      "paper_id": "paper03",
+      "title": "TempoWeave: Cycle-Aware Adaptation for Synthetic Stream Forecasting",
+      "reading_depth": "full",
+      "coverage": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+      "research_question": "在固定调度约束下预测虚构事件流的下一状态。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+      "summary": "这篇 Original synthetic test paper 提出虚构方法 TempoWeave：双尺度相位估计器生成周期坐标，并在相位分歧时调整状态更新强度。实验使用RiverLoop-24 与 HarborMist-18，指标为归一化平均绝对误差（NMAE，越低越好）与平均调度延迟（毫秒）。TempoWeave 在 RiverLoop-24/HarborMist-18 上分别取得 0.187/0.203 NMAE，平均延迟为 10.6 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。移除周期编码后，NMAE 变为 0.211/0.225，延迟为 10.2 ms，支持周期坐标在这两个虚构任务中的作用。结论仅覆盖虚构周期扰动，不足以证明任意真实周期或完全非周期场景有效。",
+      "methods": [
+        {
+          "name": "TempoWeave",
+          "section": "3 Method",
+          "pages": [
+            1
+          ],
+          "input_output": "输入为synthetic event-stream forecasting中的虚构样本，输出为任务特定估计；不产生任何真实系统结论。",
+          "steps": [
+            "双尺度相位估计器生成周期坐标，并在相位分歧时调整状态更新强度",
+            "p_t = alpha * p_short + (1 - alpha) * p_long;  u_t = x_t + gamma * cos(p_t)",
+            "Estimate short and long cycle coordinates from the fabricated history.",
+            "Update the forecaster and clip the adjustment to the validated range."
+          ],
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "TempoWeave implements the following mechanism: two phase estimators propose short and long cycle coordinates, and a consistency weight adapts the state update when the coordinates diverge."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "p_t = alpha * p_short + (1 - alpha) * p_long; u_t = x_t + gamma * cos(p_t)"
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "1: Estimate short and long cycle coordinates from the fabricated history."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "4: Update the forecaster and clip the adjustment to the validated range."
+            }
+          ]
+        },
+        {
+          "name": "受控训练与评估协议",
+          "section": "3 Method; 4 Experiments; 6 Discussion; Appendix",
+          "pages": [
+            2
+          ],
+          "input_output": "固定虚构数据划分和随机种子，输出主结果、消融结果和单独的压力测试结果。",
+          "steps": [
+            "验证集从 10 次试验中选择配置。",
+            "主表使用 17、29、43 三个虚构随机种子的算术平均。",
+            "压力测试单独报告，不与主测试集混合。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "3 Method",
+              "quote": "Training uses a fixed synthetic schedule with 10 validation trials."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            },
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "When the imposed cycle length moves outside the validation range, TempoWeave records 0.229 NMAE on RiverLoop-24 and 0.235 on HarborMist-18; this is a distinct out-of-range stress condition."
+            }
+          ]
+        }
+      ],
+      "experiments": [
+        {
+          "name": "双数据集主实验",
+          "section": "4 Experiments; 5 Results",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18",
+          "datasets": [
+            "RiverLoop-24",
+            "HarborMist-18"
+          ],
+          "baselines": [
+            "FixedGate",
+            "WindowMean"
+          ],
+          "metrics": [
+            "NMAE",
+            "latency in milliseconds"
+          ],
+          "setup": "相同测试分区与输入历史；三个虚构种子；主指标为 NMAE，辅助测量为 latency in milliseconds。",
+          "results": [
+            "TempoWeave 在 RiverLoop-24/HarborMist-18 上分别取得 0.187/0.203 NMAE，平均延迟为 10.6 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "TempoWeave 0.187 0.203 10.6"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FixedGate 0.231 0.248 8.0"
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            }
+          ]
+        },
+        {
+          "name": "定义组件消融",
+          "section": "6 Discussion; Table 2",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18",
+          "datasets": [
+            "RiverLoop-24",
+            "HarborMist-18"
+          ],
+          "baselines": [
+            "NoCycleCode"
+          ],
+          "metrics": [
+            "NMAE",
+            "latency in milliseconds"
+          ],
+          "setup": "仅移除论文定义的组件，其他虚构训练计划保持一致。",
+          "results": [
+            "移除周期编码后，NMAE 变为 0.211/0.225，延迟为 10.2 ms，支持周期坐标在这两个虚构任务中的作用。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "TempoWeave 0.187 0.203 10.6"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoCycleCode 0.211 0.225 10.2"
+            }
+          ]
+        },
+        {
+          "name": "独立压力条件",
+          "section": "6 Discussion",
+          "pages": [
+            2
+          ],
+          "dataset": "RiverLoop-24 与 HarborMist-18 的单独压力划分",
+          "datasets": [
+            "RiverLoop-24 stress split",
+            "HarborMist-18 stress split"
+          ],
+          "baselines": [
+            "不与主表混合"
+          ],
+          "metrics": [
+            "NMAE"
+          ],
+          "setup": "只改变一个虚构生成器属性，标准测试结果保持不变。",
+          "results": [
+            "When the imposed cycle length moves outside the validation range, TempoWeave records 0.229 NMAE on RiverLoop-24 and 0.235 on HarborMist-18; this is a distinct out-of-range stress condition."
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "When the imposed cycle length moves outside the validation range, TempoWeave records 0.229 NMAE on RiverLoop-24 and 0.235 on HarborMist-18; this is a distinct out-of-range stress condition."
+            }
+          ]
+        }
+      ],
+      "contributions": [
+        "原创构造 TempoWeave 的虚构计算流程、ASCII 公式与算法步骤，并在物理页 [1] 提供证据。",
+        "为RiverLoop-24 与 HarborMist-18设计一致的训练/验证/测试协议，主结果和消融结果均有连续表格行证据，论文正文另报告对应结果。",
+        "明确声明全部方法、数据、实验和参考文献为合成内容，并把真实应用外推列为证据不足。"
+      ],
+      "limitations": [
+        {
+          "statement": "The experiments cover fabricated periodic disturbances only and do not demonstrate benefits for arbitrary real periodic processes or wholly nonperiodic environments.",
+          "type": "author_claim",
+          "statement_type": "author_claim",
+          "section": "7 Limitations",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The experiments cover fabricated periodic disturbances only and do not demonstrate benefits for arbitrary real periodic processes or wholly nonperiodic environments."
+            }
+          ]
+        },
+        {
+          "statement": "分析推断：没有独立实现、真实硬件、显著性检验或外部专家复核，因此不能把这些虚构结果解释为实际部署、安全性或普遍优越性证据。",
+          "type": "agent_inference",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The experiments cover fabricated periodic disturbances only and do not demonstrate benefits for arbitrary real periodic processes or wholly nonperiodic environments."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, TempoWeave is a promising design rather than evidence of universal superiority."
+            },
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The evaluation also lacks independent implementation, real hardware, external reviewers, and statistical significance tests."
+            }
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "statement": "研究问题：在固定调度约束下预测虚构事件流的下一状态；原文将目标限定为受控合成环境中的方法比较。",
+          "statement_type": "paper_fact",
+          "section": "1 Introduction",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "This paper asks whether explicit cycle-phase adaptation can make next-state forecasts robust to changing periodicity in fabricated sensor histories."
+            },
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: two phase estimators propose short and long cycle coordinates, and a consistency weight adapts the state update when the coordinates diverge."
+            }
+          ]
+        },
+        {
+          "statement": "方法：双尺度相位估计器生成周期坐标，并在相位分歧时调整状态更新强度；公式给出了对应的合成计算。",
+          "statement_type": "paper_fact",
+          "section": "3 Method",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "TempoWeave implements the following mechanism: two phase estimators propose short and long cycle coordinates, and a consistency weight adapts the state update when the coordinates diverge."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "p_t = alpha * p_short + (1 - alpha) * p_long; u_t = x_t + gamma * cos(p_t)"
+            }
+          ]
+        },
+        {
+          "statement": "实验使用RiverLoop-24 与 HarborMist-18，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+          "statement_type": "paper_fact",
+          "section": "4 Experiments",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            }
+          ]
+        },
+        {
+          "statement": "TempoWeave 在 RiverLoop-24/HarborMist-18 上分别取得 0.187/0.203 NMAE，平均延迟为 10.6 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+          "statement_type": "experiment_result",
+          "section": "5 Results; Table 1",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "TempoWeave 0.187 0.203 10.6"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FixedGate 0.231 0.248 8.0"
+            }
+          ]
+        },
+        {
+          "statement": "移除周期编码后，NMAE 变为 0.211/0.225，延迟为 10.2 ms，支持周期坐标在这两个虚构任务中的作用。",
+          "statement_type": "experiment_result",
+          "section": "6 Discussion; Table 2",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "TempoWeave 0.187 0.203 10.6"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoCycleCode 0.211 0.225 10.2"
+            }
+          ]
+        },
+        {
+          "statement": "证据边界：结论仅覆盖虚构周期扰动，不足以证明任意真实周期或完全非周期场景有效。",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The experiments cover fabricated periodic disturbances only and do not demonstrate benefits for arbitrary real periodic processes or wholly nonperiodic environments."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, TempoWeave is a promising design rather than evidence of universal superiority."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "这是本项目原创生成的 Original synthetic test paper，不是现实研究发现，也不能用于证明真实论文上的普遍阅读效果。",
+        "公式和表格虽为文本型 PDF，提取后仍可能丢失视觉行列关系；笔记只采用能在对应物理页连续匹配的文本。",
+        "自动证据校验只检查页码和连续文本匹配，语义支持由主 Agent 另行复核。"
+      ],
+      "uncertainties": [
+        "未进行真实数据采集、独立实现、真实硬件测量或统计显著性检验，因此现实有效性未知。",
+        "虚构参考文献仅用于解析展示，不代表可检索的真实出版物。"
+      ],
+      "reproduction": {
+        "data": "全部由本项目虚构生成，无外部数据",
+        "seeds": [
+          17,
+          29,
+          43
+        ],
+        "validation_trials": 10,
+        "code": "论文内仅有伪代码，未声称提供可执行实现",
+        "hardware": "未使用真实硬件测量"
+      }
+    },
+    {
+      "paper_id": "paper04",
+      "title": "MosaicField: Region-Consistent Compression for Synthetic Sensor Maps",
+      "reading_depth": "full",
+      "coverage": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+      "research_question": "在虚构比特预算下压缩并重建带区域边界的传感器地图。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+      "summary": "这篇 Original synthetic test paper 提出虚构方法 MosaicField：自适应区域块共享边界草图，并联合优化重建误差与接缝一致性。实验使用GridQuarry-32 与 CavernTone-20，指标为峰值信噪比（PSNR，越高越好）与每张地图的虚构千比特数。MosaicField 在 GridQuarry-32/CavernTone-20 上分别取得 31.4/30.8 dB PSNR，开销为 36.0/38.0 kb；UniformTile 为 28.6/27.9 dB 与 42.0/45.0 kb。移除接缝损失后，PSNR 降为 30.1/29.5 dB，开销为 36.2/38.2 kb，支持边界约束对重建质量的贡献。虚构地图结果不能证明医学影像诊断、真实地理测绘或通用无损压缩有效。",
+      "methods": [
+        {
+          "name": "MosaicField",
+          "section": "3 Method",
+          "pages": [
+            1
+          ],
+          "input_output": "输入为synthetic sensor-map compression中的虚构样本，输出为任务特定估计；不产生任何真实系统结论。",
+          "steps": [
+            "自适应区域块共享边界草图，并联合优化重建误差与接缝一致性",
+            "L = mean((x - x_hat)^2) + beta * mean((b_left - b_right)^2)",
+            "Partition each fabricated map into adaptive rectangular tiles.",
+            "Minimize reconstruction and seam losses, then serialize the region codes."
+          ],
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "MosaicField implements the following mechanism: adaptive tiles share boundary sketches and optimize a joint reconstruction and seam objective before entropy-free synthetic serialization."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "L = mean((x - x_hat)^2) + beta * mean((b_left - b_right)^2)"
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "1: Partition each fabricated map into adaptive rectangular tiles."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "4: Minimize reconstruction and seam losses, then serialize the region codes."
+            }
+          ]
+        },
+        {
+          "name": "受控训练与评估协议",
+          "section": "3 Method; 4 Experiments; 6 Discussion; Appendix",
+          "pages": [
+            2
+          ],
+          "input_output": "固定虚构数据划分和随机种子，输出主结果、消融结果和单独的压力测试结果。",
+          "steps": [
+            "验证集从 14 次试验中选择配置。",
+            "主表使用 17、29、43 三个虚构随机种子的算术平均。",
+            "压力测试单独报告，不与主测试集混合。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "GridQuarry-32 contains 24,000 training, 4,000 validation, and 4,000 test episodes; CavernTone-20 contains 14,000 training, 3,000 validation, and 3,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "3 Method",
+              "quote": "Training uses a fixed synthetic schedule with 14 validation trials."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            },
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "With twice as many synthetic boundary fragments, MosaicField obtains 29.8 dB on GridQuarry-32 and 29.1 dB on CavernTone-20; these fragmentation results remain separate from the standard maps."
+            }
+          ]
+        }
+      ],
+      "experiments": [
+        {
+          "name": "双数据集主实验",
+          "section": "4 Experiments; 5 Results",
+          "pages": [
+            2
+          ],
+          "dataset": "GridQuarry-32 与 CavernTone-20",
+          "datasets": [
+            "GridQuarry-32",
+            "CavernTone-20"
+          ],
+          "baselines": [
+            "UniformTile",
+            "WindowMean"
+          ],
+          "metrics": [
+            "PSNR in dB",
+            "synthetic kilobits per map"
+          ],
+          "setup": "相同测试分区与输入历史；三个虚构种子；主指标为 PSNR in dB，辅助测量为 synthetic kilobits per map。",
+          "results": [
+            "MosaicField 在 GridQuarry-32/CavernTone-20 上分别取得 31.4/30.8 dB PSNR，开销为 36.0/38.0 kb；UniformTile 为 28.6/27.9 dB 与 42.0/45.0 kb。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "GridQuarry-32 contains 24,000 training, 4,000 validation, and 4,000 test episodes; CavernTone-20 contains 14,000 training, 3,000 validation, and 3,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "MosaicField 31.4 30.8 36.0 38.0"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "UniformTile 28.6 27.9 42.0 45.0"
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            }
+          ]
+        },
+        {
+          "name": "定义组件消融",
+          "section": "6 Discussion; Table 2",
+          "pages": [
+            2
+          ],
+          "dataset": "GridQuarry-32 与 CavernTone-20",
+          "datasets": [
+            "GridQuarry-32",
+            "CavernTone-20"
+          ],
+          "baselines": [
+            "NoSeamLoss"
+          ],
+          "metrics": [
+            "PSNR in dB",
+            "synthetic kilobits per map"
+          ],
+          "setup": "仅移除论文定义的组件，其他虚构训练计划保持一致。",
+          "results": [
+            "移除接缝损失后，PSNR 降为 30.1/29.5 dB，开销为 36.2/38.2 kb，支持边界约束对重建质量的贡献。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "MosaicField 31.4 30.8 36.0 38.0"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoSeamLoss 30.1 29.5 36.2 38.2"
+            }
+          ]
+        },
+        {
+          "name": "独立压力条件",
+          "section": "6 Discussion",
+          "pages": [
+            2
+          ],
+          "dataset": "GridQuarry-32 与 CavernTone-20 的单独压力划分",
+          "datasets": [
+            "GridQuarry-32 stress split",
+            "CavernTone-20 stress split"
+          ],
+          "baselines": [
+            "不与主表混合"
+          ],
+          "metrics": [
+            "PSNR in dB"
+          ],
+          "setup": "只改变一个虚构生成器属性，标准测试结果保持不变。",
+          "results": [
+            "With twice as many synthetic boundary fragments, MosaicField obtains 29.8 dB on GridQuarry-32 and 29.1 dB on CavernTone-20; these fragmentation results remain separate from the standard maps."
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "With twice as many synthetic boundary fragments, MosaicField obtains 29.8 dB on GridQuarry-32 and 29.1 dB on CavernTone-20; these fragmentation results remain separate from the standard maps."
+            }
+          ]
+        }
+      ],
+      "contributions": [
+        "原创构造 MosaicField 的虚构计算流程、ASCII 公式与算法步骤，并在物理页 [1] 提供证据。",
+        "为GridQuarry-32 与 CavernTone-20设计一致的训练/验证/测试协议，主结果和消融结果均有连续表格行证据，论文正文另报告对应结果。",
+        "明确声明全部方法、数据、实验和参考文献为合成内容，并把真实应用外推列为证据不足。"
+      ],
+      "limitations": [
+        {
+          "statement": "Only fabricated sensor maps are evaluated, so the work provides no evidence for diagnostic imaging, real geographic surveying, or universal lossless compression.",
+          "type": "author_claim",
+          "statement_type": "author_claim",
+          "section": "7 Limitations",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "Only fabricated sensor maps are evaluated, so the work provides no evidence for diagnostic imaging, real geographic surveying, or universal lossless compression."
+            }
+          ]
+        },
+        {
+          "statement": "分析推断：没有独立实现、真实硬件、显著性检验或外部专家复核，因此不能把这些虚构结果解释为实际部署、安全性或普遍优越性证据。",
+          "type": "agent_inference",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "Only fabricated sensor maps are evaluated, so the work provides no evidence for diagnostic imaging, real geographic surveying, or universal lossless compression."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, MosaicField is a promising design rather than evidence of universal superiority."
+            },
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The evaluation also lacks independent implementation, real hardware, external reviewers, and statistical significance tests."
+            }
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "statement": "研究问题：在虚构比特预算下压缩并重建带区域边界的传感器地图；原文将目标限定为受控合成环境中的方法比较。",
+          "statement_type": "paper_fact",
+          "section": "1 Introduction",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "This paper asks whether region-boundary consistency can improve reconstructed sensor maps while retaining a compact fictional bit budget."
+            },
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: adaptive tiles share boundary sketches and optimize a joint reconstruction and seam objective before entropy-free synthetic serialization."
+            }
+          ]
+        },
+        {
+          "statement": "方法：自适应区域块共享边界草图，并联合优化重建误差与接缝一致性；公式给出了对应的合成计算。",
+          "statement_type": "paper_fact",
+          "section": "3 Method",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "MosaicField implements the following mechanism: adaptive tiles share boundary sketches and optimize a joint reconstruction and seam objective before entropy-free synthetic serialization."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "L = mean((x - x_hat)^2) + beta * mean((b_left - b_right)^2)"
+            }
+          ]
+        },
+        {
+          "statement": "实验使用GridQuarry-32 与 CavernTone-20，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+          "statement_type": "paper_fact",
+          "section": "4 Experiments",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "GridQuarry-32 contains 24,000 training, 4,000 validation, and 4,000 test episodes; CavernTone-20 contains 14,000 training, 3,000 validation, and 3,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            }
+          ]
+        },
+        {
+          "statement": "MosaicField 在 GridQuarry-32/CavernTone-20 上分别取得 31.4/30.8 dB PSNR，开销为 36.0/38.0 kb；UniformTile 为 28.6/27.9 dB 与 42.0/45.0 kb。",
+          "statement_type": "experiment_result",
+          "section": "5 Results; Table 1",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "MosaicField 31.4 30.8 36.0 38.0"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "UniformTile 28.6 27.9 42.0 45.0"
+            }
+          ]
+        },
+        {
+          "statement": "移除接缝损失后，PSNR 降为 30.1/29.5 dB，开销为 36.2/38.2 kb，支持边界约束对重建质量的贡献。",
+          "statement_type": "experiment_result",
+          "section": "6 Discussion; Table 2",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "MosaicField 31.4 30.8 36.0 38.0"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoSeamLoss 30.1 29.5 36.2 38.2"
+            }
+          ]
+        },
+        {
+          "statement": "证据边界：虚构地图结果不能证明医学影像诊断、真实地理测绘或通用无损压缩有效。",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "Only fabricated sensor maps are evaluated, so the work provides no evidence for diagnostic imaging, real geographic surveying, or universal lossless compression."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, MosaicField is a promising design rather than evidence of universal superiority."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "这是本项目原创生成的 Original synthetic test paper，不是现实研究发现，也不能用于证明真实论文上的普遍阅读效果。",
+        "公式和表格虽为文本型 PDF，提取后仍可能丢失视觉行列关系；笔记只采用能在对应物理页连续匹配的文本。",
+        "自动证据校验只检查页码和连续文本匹配，语义支持由主 Agent 另行复核。"
+      ],
+      "uncertainties": [
+        "未进行真实数据采集、独立实现、真实硬件测量或统计显著性检验，因此现实有效性未知。",
+        "虚构参考文献仅用于解析展示，不代表可检索的真实出版物。"
+      ],
+      "reproduction": {
+        "data": "全部由本项目虚构生成，无外部数据",
+        "seeds": [
+          17,
+          29,
+          43
+        ],
+        "validation_trials": 14,
+        "code": "论文内仅有伪代码，未声称提供可执行实现",
+        "hardware": "未使用真实硬件测量"
+      }
+    },
+    {
+      "paper_id": "paper05",
+      "title": "ChorusLens: Multi-View Alignment for Synthetic Gesture Episodes",
+      "reading_depth": "full",
+      "coverage": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+      "research_question": "在可见性不一致的虚构多视角手势片段中恢复同步关系。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+      "summary": "这篇 Original synthetic test paper 提出虚构方法 ChorusLens：各视角轨迹通过可见性掩码投票更新共享对齐令牌，缺失关键点不参与同步损失。实验使用GestureOrbit-60 与 StudioDrift-36，指标为视角一致性误差（越低越好）与同步 F1（越高越好）。ChorusLens 在两个测试集上的视角一致性误差为 0.173/0.189，同步 F1 为 0.887/0.871；IndependentPose 的误差为 0.248/0.271，F1 为 0.812/0.788。移除共享对齐令牌后，误差变为 0.221/0.239，F1 变为 0.846/0.825，两个指标均弱于完整方法。合成手势不包含真实身份或真实人体采集数据，不能据此主张身份识别或任意遮挡条件下的可靠性。",
+      "methods": [
+        {
+          "name": "ChorusLens",
+          "section": "3 Method",
+          "pages": [
+            1
+          ],
+          "input_output": "输入为synthetic multi-view gesture alignment中的虚构样本，输出为任务特定估计；不产生任何真实系统结论。",
+          "steps": [
+            "各视角轨迹通过可见性掩码投票更新共享对齐令牌，缺失关键点不参与同步损失",
+            "A = sum_v mask_v * (z_v - a_v)^2 / sum_v mask_v;  S = 1 - normalized(A)",
+            "Extract a synthetic track from each available view.",
+            "Optimize synchronization score S and emit aligned episode timestamps."
+          ],
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "ChorusLens implements the following mechanism: view-specific tracks vote on a shared alignment token, and a visibility mask prevents missing landmarks from contributing to the synchronization loss."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "A = sum_v mask_v * (z_v - a_v)^2 / sum_v mask_v; S = 1 - normalized(A)"
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "1: Extract a synthetic track from each available view."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "4: Optimize synchronization score S and emit aligned episode timestamps."
+            }
+          ]
+        },
+        {
+          "name": "受控训练与评估协议",
+          "section": "3 Method; 4 Experiments; 6 Discussion; Appendix",
+          "pages": [
+            2
+          ],
+          "input_output": "固定虚构数据划分和随机种子，输出主结果、消融结果和单独的压力测试结果。",
+          "steps": [
+            "验证集从 18 次试验中选择配置。",
+            "主表使用 17、29、43 三个虚构随机种子的算术平均。",
+            "压力测试单独报告，不与主测试集混合。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "GestureOrbit-60 contains 42,000 training, 9,000 validation, and 9,000 test episodes; StudioDrift-36 contains 24,000 training, 6,000 validation, and 6,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "3 Method",
+              "quote": "Training uses a fixed synthetic schedule with 18 validation trials."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            },
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "With one entire synthetic view hidden, ChorusLens obtains synchronization F1 of 0.821 on GestureOrbit-60 and 0.804 on StudioDrift-36; the main table retains all standard views."
+            }
+          ]
+        }
+      ],
+      "experiments": [
+        {
+          "name": "双数据集主实验",
+          "section": "4 Experiments; 5 Results",
+          "pages": [
+            2
+          ],
+          "dataset": "GestureOrbit-60 与 StudioDrift-36",
+          "datasets": [
+            "GestureOrbit-60",
+            "StudioDrift-36"
+          ],
+          "baselines": [
+            "IndependentPose",
+            "WindowMean"
+          ],
+          "metrics": [
+            "view-consistency error",
+            "synchronization F1"
+          ],
+          "setup": "相同测试分区与输入历史；三个虚构种子；主指标为 view-consistency error，辅助测量为 synchronization F1。",
+          "results": [
+            "ChorusLens 在两个测试集上的视角一致性误差为 0.173/0.189，同步 F1 为 0.887/0.871；IndependentPose 的误差为 0.248/0.271，F1 为 0.812/0.788。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "GestureOrbit-60 contains 42,000 training, 9,000 validation, and 9,000 test episodes; StudioDrift-36 contains 24,000 training, 6,000 validation, and 6,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "ChorusLens 0.173 0.189 0.887 0.871"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "IndependentPose 0.248 0.271 0.812 0.788"
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            }
+          ]
+        },
+        {
+          "name": "定义组件消融",
+          "section": "6 Discussion; Table 2",
+          "pages": [
+            2
+          ],
+          "dataset": "GestureOrbit-60 与 StudioDrift-36",
+          "datasets": [
+            "GestureOrbit-60",
+            "StudioDrift-36"
+          ],
+          "baselines": [
+            "NoAlignmentToken"
+          ],
+          "metrics": [
+            "view-consistency error",
+            "synchronization F1"
+          ],
+          "setup": "仅移除论文定义的组件，其他虚构训练计划保持一致。",
+          "results": [
+            "移除共享对齐令牌后，误差变为 0.221/0.239，F1 变为 0.846/0.825，两个指标均弱于完整方法。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "ChorusLens 0.173 0.189 0.887 0.871"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoAlignmentToken 0.221 0.239 0.846 0.825"
+            }
+          ]
+        },
+        {
+          "name": "独立压力条件",
+          "section": "6 Discussion",
+          "pages": [
+            2
+          ],
+          "dataset": "GestureOrbit-60 与 StudioDrift-36 的单独压力划分",
+          "datasets": [
+            "GestureOrbit-60 stress split",
+            "StudioDrift-36 stress split"
+          ],
+          "baselines": [
+            "不与主表混合"
+          ],
+          "metrics": [
+            "synchronization F1"
+          ],
+          "setup": "只改变一个虚构生成器属性，标准测试结果保持不变。",
+          "results": [
+            "With one entire synthetic view hidden, ChorusLens obtains synchronization F1 of 0.821 on GestureOrbit-60 and 0.804 on StudioDrift-36; the main table retains all standard views."
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "With one entire synthetic view hidden, ChorusLens obtains synchronization F1 of 0.821 on GestureOrbit-60 and 0.804 on StudioDrift-36; the main table retains all standard views."
+            }
+          ]
+        }
+      ],
+      "contributions": [
+        "原创构造 ChorusLens 的虚构计算流程、ASCII 公式与算法步骤，并在物理页 [1] 提供证据。",
+        "为GestureOrbit-60 与 StudioDrift-36设计一致的训练/验证/测试协议，主结果和消融结果均有连续表格行证据，论文正文另报告对应结果。",
+        "明确声明全部方法、数据、实验和参考文献为合成内容，并把真实应用外推列为证据不足。"
+      ],
+      "limitations": [
+        {
+          "statement": "The episodes contain no recorded people or identities, and the experiments cannot establish recognition performance or reliability under arbitrary real occlusion.",
+          "type": "author_claim",
+          "statement_type": "author_claim",
+          "section": "7 Limitations",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The episodes contain no recorded people or identities, and the experiments cannot establish recognition performance or reliability under arbitrary real occlusion."
+            }
+          ]
+        },
+        {
+          "statement": "分析推断：没有独立实现、真实硬件、显著性检验或外部专家复核，因此不能把这些虚构结果解释为实际部署、安全性或普遍优越性证据。",
+          "type": "agent_inference",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The episodes contain no recorded people or identities, and the experiments cannot establish recognition performance or reliability under arbitrary real occlusion."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, ChorusLens is a promising design rather than evidence of universal superiority."
+            },
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The evaluation also lacks independent implementation, real hardware, external reviewers, and statistical significance tests."
+            }
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "statement": "研究问题：在可见性不一致的虚构多视角手势片段中恢复同步关系；原文将目标限定为受控合成环境中的方法比较。",
+          "statement_type": "paper_fact",
+          "section": "1 Introduction",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "This paper asks whether a shared alignment token can synchronize fabricated gesture views without assuming identical visibility across cameras."
+            },
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: view-specific tracks vote on a shared alignment token, and a visibility mask prevents missing landmarks from contributing to the synchronization loss."
+            }
+          ]
+        },
+        {
+          "statement": "方法：各视角轨迹通过可见性掩码投票更新共享对齐令牌，缺失关键点不参与同步损失；公式给出了对应的合成计算。",
+          "statement_type": "paper_fact",
+          "section": "3 Method",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "ChorusLens implements the following mechanism: view-specific tracks vote on a shared alignment token, and a visibility mask prevents missing landmarks from contributing to the synchronization loss."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "A = sum_v mask_v * (z_v - a_v)^2 / sum_v mask_v; S = 1 - normalized(A)"
+            }
+          ]
+        },
+        {
+          "statement": "实验使用GestureOrbit-60 与 StudioDrift-36，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+          "statement_type": "paper_fact",
+          "section": "4 Experiments",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "GestureOrbit-60 contains 42,000 training, 9,000 validation, and 9,000 test episodes; StudioDrift-36 contains 24,000 training, 6,000 validation, and 6,000 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            }
+          ]
+        },
+        {
+          "statement": "ChorusLens 在两个测试集上的视角一致性误差为 0.173/0.189，同步 F1 为 0.887/0.871；IndependentPose 的误差为 0.248/0.271，F1 为 0.812/0.788。",
+          "statement_type": "experiment_result",
+          "section": "5 Results; Table 1",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "ChorusLens 0.173 0.189 0.887 0.871"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "IndependentPose 0.248 0.271 0.812 0.788"
+            }
+          ]
+        },
+        {
+          "statement": "移除共享对齐令牌后，误差变为 0.221/0.239，F1 变为 0.846/0.825，两个指标均弱于完整方法。",
+          "statement_type": "experiment_result",
+          "section": "6 Discussion; Table 2",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "ChorusLens 0.173 0.189 0.887 0.871"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoAlignmentToken 0.221 0.239 0.846 0.825"
+            }
+          ]
+        },
+        {
+          "statement": "证据边界：合成手势不包含真实身份或真实人体采集数据，不能据此主张身份识别或任意遮挡条件下的可靠性。",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The episodes contain no recorded people or identities, and the experiments cannot establish recognition performance or reliability under arbitrary real occlusion."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, ChorusLens is a promising design rather than evidence of universal superiority."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "这是本项目原创生成的 Original synthetic test paper，不是现实研究发现，也不能用于证明真实论文上的普遍阅读效果。",
+        "公式和表格虽为文本型 PDF，提取后仍可能丢失视觉行列关系；笔记只采用能在对应物理页连续匹配的文本。",
+        "自动证据校验只检查页码和连续文本匹配，语义支持由主 Agent 另行复核。"
+      ],
+      "uncertainties": [
+        "未进行真实数据采集、独立实现、真实硬件测量或统计显著性检验，因此现实有效性未知。",
+        "虚构参考文献仅用于解析展示，不代表可检索的真实出版物。"
+      ],
+      "reproduction": {
+        "data": "全部由本项目虚构生成，无外部数据",
+        "seeds": [
+          17,
+          29,
+          43
+        ],
+        "validation_trials": 18,
+        "code": "论文内仅有伪代码，未声称提供可执行实现",
+        "hardware": "未使用真实硬件测量"
+      }
+    },
+    {
+      "paper_id": "paper06",
+      "title": "DeltaPilot: Stability-Constrained Tuning for Synthetic Control Traces",
+      "reading_depth": "full",
+      "coverage": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+      "research_question": "在虚构控制轨迹调参中同时降低约束违反率与稳定所需步数。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+      "summary": "这篇 Original synthetic test paper 提出虚构方法 DeltaPilot：候选更新先经过合成稳定屏障检查，再投影到允许区域，仅在目标改善时接受。实验使用PendulumWorks-50 与 ReactorToy-45，指标为约束违反率（百分比，越低越好）与稳定步数（越低越好）。DeltaPilot 在两个测试集上的违反率为 3.2%/3.8%，稳定步数为 58/63；FreeTune 为 8.7%/9.4% 与 74/81 步。移除稳定屏障后，违反率升至 6.9%/7.5%，稳定步数变为 61/66，支持屏障在虚构任务中的约束作用。结果不构成真实反应堆、机器人或一般非线性系统的安全证明，也不能替代形式化验证。",
+      "methods": [
+        {
+          "name": "DeltaPilot",
+          "section": "3 Method",
+          "pages": [
+            1
+          ],
+          "input_output": "输入为synthetic controller tuning中的虚构样本，输出为任务特定估计；不产生任何真实系统结论。",
+          "steps": [
+            "候选更新先经过合成稳定屏障检查，再投影到允许区域，仅在目标改善时接受",
+            "J(theta) = C_settle + mu * max(0, V(theta) - v_max);  theta_new = project(theta + step)",
+            "Roll out the current controller on a fabricated training trace.",
+            "Project the remaining update and retain the lower-objective candidate."
+          ],
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "DeltaPilot implements the following mechanism: a candidate update is projected away from a synthetic barrier region and accepted only when its predicted settling cost and violation margin both improve."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "J(theta) = C_settle + mu * max(0, V(theta) - v_max); theta_new = project(theta + step)"
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "1: Roll out the current controller on a fabricated training trace."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "4: Project the remaining update and retain the lower-objective candidate."
+            }
+          ]
+        },
+        {
+          "name": "受控训练与评估协议",
+          "section": "3 Method; 4 Experiments; 6 Discussion; Appendix",
+          "pages": [
+            2
+          ],
+          "input_output": "固定虚构数据划分和随机种子，输出主结果、消融结果和单独的压力测试结果。",
+          "steps": [
+            "验证集从 12 次试验中选择配置。",
+            "主表使用 17、29、43 三个虚构随机种子的算术平均。",
+            "压力测试单独报告，不与主测试集混合。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "PendulumWorks-50 contains 35,000 training, 7,500 validation, and 7,500 test episodes; ReactorToy-45 contains 30,000 training, 7,500 validation, and 7,500 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "3 Method",
+              "quote": "Training uses a fixed synthetic schedule with 12 validation trials."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            },
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "When actuator drift is doubled in a separate stress split, DeltaPilot records violation rates of 5.6 percent and 6.1 percent; these values are not part of the standard test comparison."
+            }
+          ]
+        }
+      ],
+      "experiments": [
+        {
+          "name": "双数据集主实验",
+          "section": "4 Experiments; 5 Results",
+          "pages": [
+            2
+          ],
+          "dataset": "PendulumWorks-50 与 ReactorToy-45",
+          "datasets": [
+            "PendulumWorks-50",
+            "ReactorToy-45"
+          ],
+          "baselines": [
+            "FreeTune",
+            "WindowMean"
+          ],
+          "metrics": [
+            "violation rate in percent",
+            "settling steps"
+          ],
+          "setup": "相同测试分区与输入历史；三个虚构种子；主指标为 violation rate in percent，辅助测量为 settling steps。",
+          "results": [
+            "DeltaPilot 在两个测试集上的违反率为 3.2%/3.8%，稳定步数为 58/63；FreeTune 为 8.7%/9.4% 与 74/81 步。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "PendulumWorks-50 contains 35,000 training, 7,500 validation, and 7,500 test episodes; ReactorToy-45 contains 30,000 training, 7,500 validation, and 7,500 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "DeltaPilot 3.2 3.8 58 63"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FreeTune 8.7 9.4 74 81"
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "All main entries are arithmetic means over synthetic seeds 17, 29, and 43."
+            }
+          ]
+        },
+        {
+          "name": "定义组件消融",
+          "section": "6 Discussion; Table 2",
+          "pages": [
+            2
+          ],
+          "dataset": "PendulumWorks-50 与 ReactorToy-45",
+          "datasets": [
+            "PendulumWorks-50",
+            "ReactorToy-45"
+          ],
+          "baselines": [
+            "NoBarrier"
+          ],
+          "metrics": [
+            "violation rate in percent",
+            "settling steps"
+          ],
+          "setup": "仅移除论文定义的组件，其他虚构训练计划保持一致。",
+          "results": [
+            "移除稳定屏障后，违反率升至 6.9%/7.5%，稳定步数变为 61/66，支持屏障在虚构任务中的约束作用。"
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "DeltaPilot 3.2 3.8 58 63"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoBarrier 6.9 7.5 61 66"
+            }
+          ]
+        },
+        {
+          "name": "独立压力条件",
+          "section": "6 Discussion",
+          "pages": [
+            2
+          ],
+          "dataset": "PendulumWorks-50 与 ReactorToy-45 的单独压力划分",
+          "datasets": [
+            "PendulumWorks-50 stress split",
+            "ReactorToy-45 stress split"
+          ],
+          "baselines": [
+            "不与主表混合"
+          ],
+          "metrics": [
+            "violation rate in percent"
+          ],
+          "setup": "只改变一个虚构生成器属性，标准测试结果保持不变。",
+          "results": [
+            "When actuator drift is doubled in a separate stress split, DeltaPilot records violation rates of 5.6 percent and 6.1 percent; these values are not part of the standard test comparison."
+          ],
+          "evidence": [
+            {
+              "page": 2,
+              "section": "6 Discussion",
+              "quote": "When actuator drift is doubled in a separate stress split, DeltaPilot records violation rates of 5.6 percent and 6.1 percent; these values are not part of the standard test comparison."
+            }
+          ]
+        }
+      ],
+      "contributions": [
+        "原创构造 DeltaPilot 的虚构计算流程、ASCII 公式与算法步骤，并在物理页 [1] 提供证据。",
+        "为PendulumWorks-50 与 ReactorToy-45设计一致的训练/验证/测试协议，主结果和消融结果均有连续表格行证据，论文正文另报告对应结果。",
+        "明确声明全部方法、数据、实验和参考文献为合成内容，并把真实应用外推列为证据不足。"
+      ],
+      "limitations": [
+        {
+          "statement": "The controller traces are fictional and provide no safety certificate for real reactors, robots, or general nonlinear systems; formal verification remains necessary.",
+          "type": "author_claim",
+          "statement_type": "author_claim",
+          "section": "7 Limitations",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The controller traces are fictional and provide no safety certificate for real reactors, robots, or general nonlinear systems; formal verification remains necessary."
+            }
+          ]
+        },
+        {
+          "statement": "分析推断：没有独立实现、真实硬件、显著性检验或外部专家复核，因此不能把这些虚构结果解释为实际部署、安全性或普遍优越性证据。",
+          "type": "agent_inference",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The controller traces are fictional and provide no safety certificate for real reactors, robots, or general nonlinear systems; formal verification remains necessary."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, DeltaPilot is a promising design rather than evidence of universal superiority."
+            },
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The evaluation also lacks independent implementation, real hardware, external reviewers, and statistical significance tests."
+            }
+          ]
+        }
+      ],
+      "claims": [
+        {
+          "statement": "研究问题：在虚构控制轨迹调参中同时降低约束违反率与稳定所需步数；原文将目标限定为受控合成环境中的方法比较。",
+          "statement_type": "paper_fact",
+          "section": "1 Introduction",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "This paper asks whether a transparent stability barrier can reduce unsafe tuning excursions while preserving efficient settling in fabricated control traces."
+            },
+            {
+              "page": 1,
+              "section": "1 Introduction",
+              "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: a candidate update is projected away from a synthetic barrier region and accepted only when its predicted settling cost and violation margin both improve."
+            }
+          ]
+        },
+        {
+          "statement": "方法：候选更新先经过合成稳定屏障检查，再投影到允许区域，仅在目标改善时接受；公式给出了对应的合成计算。",
+          "statement_type": "paper_fact",
+          "section": "3 Method",
+          "evidence": [
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "DeltaPilot implements the following mechanism: a candidate update is projected away from a synthetic barrier region and accepted only when its predicted settling cost and violation margin both improve."
+            },
+            {
+              "page": 1,
+              "section": "3 Method",
+              "quote": "J(theta) = C_settle + mu * max(0, V(theta) - v_max); theta_new = project(theta + step)"
+            }
+          ]
+        },
+        {
+          "statement": "实验使用PendulumWorks-50 与 ReactorToy-45，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+          "statement_type": "paper_fact",
+          "section": "4 Experiments",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "PendulumWorks-50 contains 35,000 training, 7,500 validation, and 7,500 test episodes; ReactorToy-45 contains 30,000 training, 7,500 validation, and 7,500 test episodes."
+            },
+            {
+              "page": 2,
+              "section": "4 Experiments",
+              "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+            }
+          ]
+        },
+        {
+          "statement": "DeltaPilot 在两个测试集上的违反率为 3.2%/3.8%，稳定步数为 58/63；FreeTune 为 8.7%/9.4% 与 74/81 步。",
+          "statement_type": "experiment_result",
+          "section": "5 Results; Table 1",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "DeltaPilot 3.2 3.8 58 63"
+            },
+            {
+              "page": 2,
+              "section": "Table 1",
+              "quote": "FreeTune 8.7 9.4 74 81"
+            }
+          ]
+        },
+        {
+          "statement": "移除稳定屏障后，违反率升至 6.9%/7.5%，稳定步数变为 61/66，支持屏障在虚构任务中的约束作用。",
+          "statement_type": "experiment_result",
+          "section": "6 Discussion; Table 2",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "DeltaPilot 3.2 3.8 58 63"
+            },
+            {
+              "page": 2,
+              "section": "Table 2",
+              "quote": "NoBarrier 6.9 7.5 61 66"
+            }
+          ]
+        },
+        {
+          "statement": "证据边界：结果不构成真实反应堆、机器人或一般非线性系统的安全证明，也不能替代形式化验证。",
+          "statement_type": "agent_inference",
+          "section": "7 Limitations; 8 Conclusion",
+          "evidence": [
+            {
+              "page": 2,
+              "section": "7 Limitations",
+              "quote": "The controller traces are fictional and provide no safety certificate for real reactors, robots, or general nonlinear systems; formal verification remains necessary."
+            },
+            {
+              "page": 2,
+              "section": "8 Conclusion",
+              "quote": "Within the reported synthetic benchmarks, DeltaPilot is a promising design rather than evidence of universal superiority."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "这是本项目原创生成的 Original synthetic test paper，不是现实研究发现，也不能用于证明真实论文上的普遍阅读效果。",
+        "公式和表格虽为文本型 PDF，提取后仍可能丢失视觉行列关系；笔记只采用能在对应物理页连续匹配的文本。",
+        "自动证据校验只检查页码和连续文本匹配，语义支持由主 Agent 另行复核。"
+      ],
+      "uncertainties": [
+        "未进行真实数据采集、独立实现、真实硬件测量或统计显著性检验，因此现实有效性未知。",
+        "虚构参考文献仅用于解析展示，不代表可检索的真实出版物。"
+      ],
+      "reproduction": {
+        "data": "全部由本项目虚构生成，无外部数据",
+        "seeds": [
+          17,
+          29,
+          43
+        ],
+        "validation_trials": 12,
+        "code": "论文内仅有伪代码，未声称提供可执行实现",
+        "hardware": "未使用真实硬件测量"
+      }
+    }
+  ],
+  "comparison": {
+    "papers": [
+      {
+        "paper_id": "paper01",
+        "title": "LatticeFlow: Budgeted State Routing for Synthetic Stream Forecasting",
+        "short_name": "LatticeFlow",
+        "reading_scope": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+        "sources": {
+          "validated_notes": "assets/examples/outputs/notes.json#/notes/0",
+          "source_pdf": "assets/examples/papers/paper01.pdf"
+        }
+      },
+      {
+        "paper_id": "paper02",
+        "title": "PrismCache: Confidence-Gated Memory for Synthetic Stream Forecasting",
+        "short_name": "PrismCache",
+        "reading_scope": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+        "sources": {
+          "validated_notes": "assets/examples/outputs/notes.json#/notes/1",
+          "source_pdf": "assets/examples/papers/paper02.pdf"
+        }
+      },
+      {
+        "paper_id": "paper03",
+        "title": "TempoWeave: Cycle-Aware Adaptation for Synthetic Stream Forecasting",
+        "short_name": "TempoWeave",
+        "reading_scope": "已逐页阅读最终 PDF 的物理页 1–3，覆盖摘要、引言、相关工作、方法、实验、结果、讨论、局限、结论、附录与虚构参考文献；所有引文页码均由最终提取文本反向定位。",
+        "sources": {
+          "validated_notes": "assets/examples/outputs/notes.json#/notes/2",
+          "source_pdf": "assets/examples/papers/paper03.pdf"
+        }
+      }
+    ],
+    "rows": [
+      {
+        "dimension": "研究问题",
+        "paper01": {
+          "paper_id": "paper01",
+          "physical_pages": [
+            1
+          ],
+          "statement_type": "paper_fact",
+          "statement": "在固定调度约束下预测虚构事件流的下一状态",
+          "evidence_ids": [
+            "PAPER01-C1"
+          ]
+        },
+        "paper02": {
+          "paper_id": "paper02",
+          "physical_pages": [
+            1
+          ],
+          "statement_type": "paper_fact",
+          "statement": "在固定调度约束下预测虚构事件流的下一状态",
+          "evidence_ids": [
+            "PAPER02-C1"
+          ]
+        },
+        "paper03": {
+          "paper_id": "paper03",
+          "physical_pages": [
+            1
+          ],
+          "statement_type": "paper_fact",
+          "statement": "在固定调度约束下预测虚构事件流的下一状态",
+          "evidence_ids": [
+            "PAPER03-C1"
+          ]
+        }
+      },
+      {
+        "dimension": "核心方法",
+        "paper01": {
+          "paper_id": "paper01",
+          "physical_pages": [
+            1
+          ],
+          "statement_type": "paper_fact",
+          "statement": "预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合",
+          "evidence_ids": [
+            "PAPER01-C2"
+          ]
+        },
+        "paper02": {
+          "paper_id": "paper02",
+          "physical_pages": [
+            1
+          ],
+          "statement_type": "paper_fact",
+          "statement": "置信门控记忆对原型状态进行加权检索，并在相似度与时效性不一致时抑制记忆残差",
+          "evidence_ids": [
+            "PAPER02-C2"
+          ]
+        },
+        "paper03": {
+          "paper_id": "paper03",
+          "physical_pages": [
+            1
+          ],
+          "statement_type": "paper_fact",
+          "statement": "双尺度相位估计器生成周期坐标，并在相位分歧时调整状态更新强度",
+          "evidence_ids": [
+            "PAPER03-C2"
+          ]
+        }
+      },
+      {
+        "dimension": "数据集与划分",
+        "paper01": {
+          "paper_id": "paper01",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "paper_fact",
+          "statement": "使用RiverLoop-24 与 HarborMist-18，相同测试分区与输入历史",
+          "evidence_ids": [
+            "PAPER01-C3"
+          ]
+        },
+        "paper02": {
+          "paper_id": "paper02",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "paper_fact",
+          "statement": "使用RiverLoop-24 与 HarborMist-18，相同测试分区与输入历史",
+          "evidence_ids": [
+            "PAPER02-C3"
+          ]
+        },
+        "paper03": {
+          "paper_id": "paper03",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "paper_fact",
+          "statement": "使用RiverLoop-24 与 HarborMist-18，相同测试分区与输入历史",
+          "evidence_ids": [
+            "PAPER03-C3"
+          ]
+        }
+      },
+      {
+        "dimension": "主要结果",
+        "paper01": {
+          "paper_id": "paper01",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "experiment_result",
+          "statement": "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms",
+          "evidence_ids": [
+            "PAPER01-C4"
+          ]
+        },
+        "paper02": {
+          "paper_id": "paper02",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "experiment_result",
+          "statement": "PrismCache 在 RiverLoop-24/HarborMist-18 上分别取得 0.179/0.196 NMAE，平均延迟为 12.4 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms",
+          "evidence_ids": [
+            "PAPER02-C4"
+          ]
+        },
+        "paper03": {
+          "paper_id": "paper03",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "experiment_result",
+          "statement": "TempoWeave 在 RiverLoop-24/HarborMist-18 上分别取得 0.187/0.203 NMAE，平均延迟为 10.6 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms",
+          "evidence_ids": [
+            "PAPER03-C4"
+          ]
+        }
+      },
+      {
+        "dimension": "消融结果",
+        "paper01": {
+          "paper_id": "paper01",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "experiment_result",
+          "statement": "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差",
+          "evidence_ids": [
+            "PAPER01-C5"
+          ]
+        },
+        "paper02": {
+          "paper_id": "paper02",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "experiment_result",
+          "statement": "移除置信门控后，NMAE 变为 0.196/0.214，延迟为 12.1 ms，说明无筛选记忆会损害这两个测试集上的误差",
+          "evidence_ids": [
+            "PAPER02-C5"
+          ]
+        },
+        "paper03": {
+          "paper_id": "paper03",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "experiment_result",
+          "statement": "移除周期编码后，NMAE 变为 0.211/0.225，延迟为 10.2 ms，支持周期坐标在这两个虚构任务中的作用",
+          "evidence_ids": [
+            "PAPER03-C5"
+          ]
+        }
+      },
+      {
+        "dimension": "证据边界",
+        "paper01": {
+          "paper_id": "paper01",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "agent_inference",
+          "statement": "结果只来自虚构事件流，不能证明真实河流、港口或其他现实系统同样受益",
+          "evidence_ids": [
+            "PAPER01-C6"
+          ]
+        },
+        "paper02": {
+          "paper_id": "paper02",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "agent_inference",
+          "statement": "实验仅支持虚构流上的记忆门控效果，不能外推到真实医疗、金融或公共数据",
+          "evidence_ids": [
+            "PAPER02-C6"
+          ]
+        },
+        "paper03": {
+          "paper_id": "paper03",
+          "physical_pages": [
+            2
+          ],
+          "statement_type": "agent_inference",
+          "statement": "结论仅覆盖虚构周期扰动，不足以证明任意真实周期或完全非周期场景有效",
+          "evidence_ids": [
+            "PAPER03-C6"
+          ]
+        }
+      }
+    ],
+    "comparability": "partially_comparable",
+    "comparability_explanation": {
+      "summary": "三篇使用相同的两个虚构数据集、划分和指标名称，因此可以在披露的合成基准内比较主表；但训练试验预算、机制与计算开销不同，且没有显著性检验，不能据此形成普遍排行榜。",
+      "shared_conditions": [
+        "RiverLoop-24 与 HarborMist-18",
+        "相同测试分区和输入历史",
+        "NMAE 与平均调度延迟",
+        "虚构种子 17、29、43"
+      ],
+      "differences": [
+        "验证试验预算分别为 12、16、10",
+        "状态路由、置信记忆和周期编码机制不同",
+        "延迟与内存取舍不同",
+        "无假设检验或置信区间"
+      ]
+    },
+    "agreements": [
+      {
+        "statement_type": "agent_inference",
+        "statement": "三者都在相同虚构任务上同时报告误差与延迟，说明不能只凭误差判断调度取舍。",
+        "source_papers": [
+          "paper01",
+          "paper02",
+          "paper03"
+        ]
+      },
+      {
+        "statement_type": "agent_inference",
+        "statement": "三篇消融均弱于各自完整模型，但只支持各自虚构机制的内部对照，不证明跨方法的因果排序。",
+        "source_papers": [
+          "paper01",
+          "paper02",
+          "paper03"
+        ]
+      }
+    ],
+    "disagreements": [
+      {
+        "statement_type": "agent_inference",
+        "statement": "PrismCache 的主表 NMAE 最低但延迟最高；LatticeFlow 与 TempoWeave 延迟较低。该差异是合成表内的资源取舍，不是普遍最优结论。",
+        "source_papers": [
+          "paper01",
+          "paper02",
+          "paper03"
+        ]
+      },
+      {
+        "statement_type": "paper_fact",
+        "statement": "三者分别采用状态路由、置信门控记忆和周期相位适配，方法假设不同。",
+        "source_papers": [
+          "paper01",
+          "paper02",
+          "paper03"
+        ]
+      }
+    ],
+    "research_opportunities": [
+      {
+        "statement_type": "agent_inference",
+        "statement": "未来合成测试可统一调参试验预算并增加置信区间，再比较误差—延迟曲线。",
+        "source_papers": [
+          "paper01",
+          "paper02",
+          "paper03"
+        ]
+      },
+      {
+        "statement_type": "agent_inference",
+        "statement": "若要研究现实有效性，必须另行创建许可清晰的真实评估，而不能把当前合成结果当作真实证据。",
+        "source_papers": [
+          "paper01",
+          "paper02",
+          "paper03"
+        ]
+      }
+    ],
+    "evidence_index": [
+      {
+        "evidence_id": "PAPER01-C1",
+        "paper_id": "paper01",
+        "pages": [
+          1
+        ],
+        "statement": "研究问题：在固定调度约束下预测虚构事件流的下一状态；原文将目标限定为受控合成环境中的方法比较。",
+        "quotes": [
+          {
+            "page": 1,
+            "section": "1 Introduction",
+            "quote": "This paper asks whether explicit budget routing can balance forecasting error and scheduling delay on discontinuous synthetic streams."
+          },
+          {
+            "page": 1,
+            "section": "1 Introduction",
+            "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: a budget router selects between a lightweight running state and a refined state, then blends both states according to observed gap severity."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER01-C2",
+        "paper_id": "paper01",
+        "pages": [
+          1
+        ],
+        "statement": "方法：预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合；公式给出了对应的合成计算。",
+        "quotes": [
+          {
+            "page": 1,
+            "section": "3 Method",
+            "quote": "LatticeFlow implements the following mechanism: a budget router selects between a lightweight running state and a refined state, then blends both states according to observed gap severity."
+          },
+          {
+            "page": 1,
+            "section": "3 Method",
+            "quote": "s_t = (1 - g_t) * r_t + g_t * q_t; g_t = sigmoid(w * b_t + v * d_t)"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER01-C3",
+        "paper_id": "paper01",
+        "pages": [
+          2
+        ],
+        "statement": "实验使用RiverLoop-24 与 HarborMist-18，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "4 Experiments",
+            "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+          },
+          {
+            "page": 2,
+            "section": "4 Experiments",
+            "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER01-C4",
+        "paper_id": "paper01",
+        "pages": [
+          2
+        ],
+        "statement": "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "Table 1",
+            "quote": "LatticeFlow 0.184 0.201 11.8"
+          },
+          {
+            "page": 2,
+            "section": "Table 1",
+            "quote": "FixedGate 0.231 0.248 8.0"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER01-C5",
+        "paper_id": "paper01",
+        "pages": [
+          2
+        ],
+        "statement": "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "Table 2",
+            "quote": "LatticeFlow 0.184 0.201 11.8"
+          },
+          {
+            "page": 2,
+            "section": "Table 2",
+            "quote": "NoRouter 0.207 0.222 10.9"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER01-C6",
+        "paper_id": "paper01",
+        "pages": [
+          2
+        ],
+        "statement": "证据边界：结果只来自虚构事件流，不能证明真实河流、港口或其他现实系统同样受益。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "7 Limitations",
+            "quote": "The study uses only synthetic event streams, so the experiments do not establish effectiveness on real rivers, harbors, or deployed monitoring systems."
+          },
+          {
+            "page": 2,
+            "section": "8 Conclusion",
+            "quote": "Within the reported synthetic benchmarks, LatticeFlow is a promising design rather than evidence of universal superiority."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER02-C1",
+        "paper_id": "paper02",
+        "pages": [
+          1
+        ],
+        "statement": "研究问题：在固定调度约束下预测虚构事件流的下一状态；原文将目标限定为受控合成环境中的方法比较。",
+        "quotes": [
+          {
+            "page": 1,
+            "section": "1 Introduction",
+            "quote": "This paper asks whether a confidence-gated episodic memory can reduce forecasting error without allowing uncertain memories to dominate the current state."
+          },
+          {
+            "page": 1,
+            "section": "1 Introduction",
+            "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: a small memory stores prototype states, while a confidence gate suppresses retrievals whose similarity and recency scores disagree."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER02-C2",
+        "paper_id": "paper02",
+        "pages": [
+          1
+        ],
+        "statement": "方法：置信门控记忆对原型状态进行加权检索，并在相似度与时效性不一致时抑制记忆残差；公式给出了对应的合成计算。",
+        "quotes": [
+          {
+            "page": 1,
+            "section": "3 Method",
+            "quote": "PrismCache implements the following mechanism: a small memory stores prototype states, while a confidence gate suppresses retrievals whose similarity and recency scores disagree."
+          },
+          {
+            "page": 1,
+            "section": "3 Method",
+            "quote": "m_t = sum_i softmax(c_t * a_i) * v_i; y_t = h_t + lambda_t * m_t"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER02-C3",
+        "paper_id": "paper02",
+        "pages": [
+          2
+        ],
+        "statement": "实验使用RiverLoop-24 与 HarborMist-18，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "4 Experiments",
+            "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+          },
+          {
+            "page": 2,
+            "section": "4 Experiments",
+            "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER02-C4",
+        "paper_id": "paper02",
+        "pages": [
+          2
+        ],
+        "statement": "PrismCache 在 RiverLoop-24/HarborMist-18 上分别取得 0.179/0.196 NMAE，平均延迟为 12.4 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "Table 1",
+            "quote": "PrismCache 0.179 0.196 12.4"
+          },
+          {
+            "page": 2,
+            "section": "Table 1",
+            "quote": "FixedGate 0.231 0.248 8.0"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER02-C5",
+        "paper_id": "paper02",
+        "pages": [
+          2
+        ],
+        "statement": "移除置信门控后，NMAE 变为 0.196/0.214，延迟为 12.1 ms，说明无筛选记忆会损害这两个测试集上的误差。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "Table 2",
+            "quote": "PrismCache 0.179 0.196 12.4"
+          },
+          {
+            "page": 2,
+            "section": "Table 2",
+            "quote": "NoConfidenceGate 0.196 0.214 12.1"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER02-C6",
+        "paper_id": "paper02",
+        "pages": [
+          2
+        ],
+        "statement": "证据边界：实验仅支持虚构流上的记忆门控效果，不能外推到真实医疗、金融或公共数据。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "7 Limitations",
+            "quote": "The memory study is confined to fabricated sequences and cannot establish safety or effectiveness for clinical, financial, or public-sector records."
+          },
+          {
+            "page": 2,
+            "section": "8 Conclusion",
+            "quote": "Within the reported synthetic benchmarks, PrismCache is a promising design rather than evidence of universal superiority."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER03-C1",
+        "paper_id": "paper03",
+        "pages": [
+          1
+        ],
+        "statement": "研究问题：在固定调度约束下预测虚构事件流的下一状态；原文将目标限定为受控合成环境中的方法比较。",
+        "quotes": [
+          {
+            "page": 1,
+            "section": "1 Introduction",
+            "quote": "This paper asks whether explicit cycle-phase adaptation can make next-state forecasts robust to changing periodicity in fabricated sensor histories."
+          },
+          {
+            "page": 1,
+            "section": "1 Introduction",
+            "quote": "Existing synthetic baselines leave a controlled gap: they do not isolate the following mechanism: two phase estimators propose short and long cycle coordinates, and a consistency weight adapts the state update when the coordinates diverge."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER03-C2",
+        "paper_id": "paper03",
+        "pages": [
+          1
+        ],
+        "statement": "方法：双尺度相位估计器生成周期坐标，并在相位分歧时调整状态更新强度；公式给出了对应的合成计算。",
+        "quotes": [
+          {
+            "page": 1,
+            "section": "3 Method",
+            "quote": "TempoWeave implements the following mechanism: two phase estimators propose short and long cycle coordinates, and a consistency weight adapts the state update when the coordinates diverge."
+          },
+          {
+            "page": 1,
+            "section": "3 Method",
+            "quote": "p_t = alpha * p_short + (1 - alpha) * p_long; u_t = x_t + gamma * cos(p_t)"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER03-C3",
+        "paper_id": "paper03",
+        "pages": [
+          2
+        ],
+        "statement": "实验使用RiverLoop-24 与 HarborMist-18，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "4 Experiments",
+            "quote": "RiverLoop-24 contains 24,000 training, 4,000 validation, and 6,000 test episodes; HarborMist-18 contains 18,000 training, 3,000 validation, and 5,000 test episodes."
+          },
+          {
+            "page": 2,
+            "section": "4 Experiments",
+            "quote": "Both datasets use disjoint episode identifiers across splits, and all methods receive the same test partitions and input histories."
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER03-C4",
+        "paper_id": "paper03",
+        "pages": [
+          2
+        ],
+        "statement": "TempoWeave 在 RiverLoop-24/HarborMist-18 上分别取得 0.187/0.203 NMAE，平均延迟为 10.6 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "Table 1",
+            "quote": "TempoWeave 0.187 0.203 10.6"
+          },
+          {
+            "page": 2,
+            "section": "Table 1",
+            "quote": "FixedGate 0.231 0.248 8.0"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER03-C5",
+        "paper_id": "paper03",
+        "pages": [
+          2
+        ],
+        "statement": "移除周期编码后，NMAE 变为 0.211/0.225，延迟为 10.2 ms，支持周期坐标在这两个虚构任务中的作用。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "Table 2",
+            "quote": "TempoWeave 0.187 0.203 10.6"
+          },
+          {
+            "page": 2,
+            "section": "Table 2",
+            "quote": "NoCycleCode 0.211 0.225 10.2"
+          }
+        ]
+      },
+      {
+        "evidence_id": "PAPER03-C6",
+        "paper_id": "paper03",
+        "pages": [
+          2
+        ],
+        "statement": "证据边界：结论仅覆盖虚构周期扰动，不足以证明任意真实周期或完全非周期场景有效。",
+        "quotes": [
+          {
+            "page": 2,
+            "section": "7 Limitations",
+            "quote": "The experiments cover fabricated periodic disturbances only and do not demonstrate benefits for arbitrary real periodic processes or wholly nonperiodic environments."
+          },
+          {
+            "page": 2,
+            "section": "8 Conclusion",
+            "quote": "Within the reported synthetic benchmarks, TempoWeave is a promising design rather than evidence of universal superiority."
+          }
+        ]
+      }
+    ]
+  },
+  "group_meeting": {
+    "paper_id": "paper01",
+    "title": "LatticeFlow: Budgeted State Routing for Synthetic Stream Forecasting",
+    "background": "在固定调度约束下预测虚构事件流的下一状态。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+    "method": [
+      "预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合",
+      "s_t = (1 - g_t) * r_t + g_t * q_t;  g_t = sigmoid(w * b_t + v * d_t)",
+      "Read event x_t, gap flag d_t, and remaining budget b_t."
+    ],
+    "experiments": [
+      {
+        "name": "主实验",
+        "result": "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "name": "消融",
+        "result": "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差",
+        "pages": [
+          2
+        ]
+      }
+    ],
+    "evidence_assessment": "主结果在论文正文与表格中一致，笔记使用可连续匹配的表格行作为证据；但实验完全是合成数据，且没有显著性检验。",
+    "critical_review": [
+      "优点：误差与延迟同时披露，并保留独立压力测试。",
+      "边界：不能外推为真实河流、港口或部署系统效果。",
+      "复现：只有虚构协议和伪代码，没有可执行实现。"
+    ],
+    "discussion_questions": [
+      "误差下降是否值得额外调度延迟？",
+      "如何统一三个方法的调参预算？",
+      "哪些新合成扰动能检验路由器的适用边界？"
+    ],
+    "evidence_index": [
+      {
+        "claim": "研究问题：在固定调度约束下预测虚构事件流的下一状态；原文将目标限定为受控合成环境中的方法比较。",
+        "pages": [
+          1
+        ]
+      },
+      {
+        "claim": "方法：预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合；公式给出了对应的合成计算。",
+        "pages": [
+          1
+        ]
+      },
+      {
+        "claim": "实验使用RiverLoop-24 与 HarborMist-18，训练/验证/测试划分互斥，所有方法接收相同测试分区和输入历史。",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "claim": "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "claim": "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差。",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "claim": "证据边界：结果只来自虚构事件流，不能证明真实河流、港口或其他现实系统同样受益。",
+        "pages": [
+          2
+        ]
+      }
+    ]
+  },
+  "flashcards": {
+    "paper_id": "paper06",
+    "title": "DeltaPilot: Stability-Constrained Tuning for Synthetic Control Traces",
+    "cards": [
+      {
+        "card_id": "card01",
+        "tag": "研究问题",
+        "question": "研究问题：请说明DeltaPilot的研究问题。",
+        "answer": "在虚构控制轨迹调参中同时降低约束违反率与稳定所需步数。研究仅询问该虚构机制在两个受控合成数据集上的表现，不涉及真实应用有效性。",
+        "difficulty": "基础",
+        "pages": [
+          1
+        ],
+        "paper_id": "paper06"
+      },
+      {
+        "card_id": "card02",
+        "tag": "核心方法",
+        "question": "核心方法：请说明DeltaPilot的核心方法。",
+        "answer": "候选更新先经过合成稳定屏障检查，再投影到允许区域，仅在目标改善时接受。",
+        "difficulty": "基础",
+        "pages": [
+          1
+        ],
+        "paper_id": "paper06"
+      },
+      {
+        "card_id": "card03",
+        "tag": "主公式",
+        "question": "主公式：请说明DeltaPilot的主公式。",
+        "answer": "J(theta) = C_settle + mu * max(0, V(theta) - v_max);  theta_new = project(theta + step)",
+        "difficulty": "中等",
+        "pages": [
+          1
+        ],
+        "paper_id": "paper06"
+      },
+      {
+        "card_id": "card04",
+        "tag": "数据与指标",
+        "question": "数据与指标：请说明DeltaPilot的数据与指标。",
+        "answer": "数据为PendulumWorks-50 与 ReactorToy-45；指标为约束违反率（百分比，越低越好）与稳定步数（越低越好）。",
+        "difficulty": "基础",
+        "pages": [
+          2
+        ],
+        "paper_id": "paper06"
+      },
+      {
+        "card_id": "card05",
+        "tag": "主要结果",
+        "question": "主要结果：请说明DeltaPilot的主要结果。",
+        "answer": "DeltaPilot 在两个测试集上的违反率为 3.2%/3.8%，稳定步数为 58/63；FreeTune 为 8.7%/9.4% 与 74/81 步。",
+        "difficulty": "中等",
+        "pages": [
+          2
+        ],
+        "paper_id": "paper06"
+      },
+      {
+        "card_id": "card06",
+        "tag": "消融",
+        "question": "消融：请说明DeltaPilot的消融。",
+        "answer": "移除稳定屏障后，违反率升至 6.9%/7.5%，稳定步数变为 61/66，支持屏障在虚构任务中的约束作用。",
+        "difficulty": "中等",
+        "pages": [
+          2
+        ],
+        "paper_id": "paper06"
+      },
+      {
+        "card_id": "card07",
+        "tag": "证据边界",
+        "question": "证据边界：请说明DeltaPilot的证据边界。",
+        "answer": "结果不构成真实反应堆、机器人或一般非线性系统的安全证明，也不能替代形式化验证。",
+        "difficulty": "中等",
+        "pages": [
+          2
+        ],
+        "paper_id": "paper06"
+      },
+      {
+        "card_id": "card08",
+        "tag": "开放讨论",
+        "question": "开放讨论：请说明DeltaPilot的开放讨论。",
+        "answer": "不能把合成控制轨迹结果当作真实系统安全证明；需要独立的真实评估与形式化验证。这是基于局限的分析，不是新增实验结论。",
+        "difficulty": "开放讨论",
+        "pages": [
+          2
+        ],
+        "paper_id": "paper06"
+      }
+    ]
+  },
+  "qa_results": [
+    {
+      "paper_id": "paper01",
+      "factual": [
+        {
+          "question": "该方法的核心机制是什么？",
+          "answer": "预算路由器依据剩余预算和缺口严重度，在轻量运行状态与精炼状态之间进行门控融合。",
+          "pages": [
+            1
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "两个虚构测试集上的主要结果是什么？",
+          "answer": "LatticeFlow 在 RiverLoop-24/HarborMist-18 上分别取得 0.184/0.201 NMAE，平均延迟为 11.8 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "定义组件消融显示了什么？",
+          "answer": "移除预算路由器后，NMAE 变为 0.207/0.222，延迟为 10.9 ms，说明完整模型以更高延迟换取了更低误差。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        }
+      ],
+      "cross_section": {
+        "question": "数据划分、主结果和局限如何共同限定结论？",
+        "answer": "各方法使用相同虚构测试分区和输入历史，因此可在各自设置内解读主表与消融；但结果只来自虚构事件流，不能证明真实河流、港口或其他现实系统同样受益，且没有显著性检验。",
+        "pages": [
+          2
+        ],
+        "result": "pass"
+      },
+      "unanswerable": [
+        {
+          "question": "LatticeFlow 是否已经在真实部署环境中证明有效？",
+          "answer": "证据不足：论文没有提供真实部署或真实数据实验，不能据此确认现实有效性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        },
+        {
+          "question": "LatticeFlow 是否在所有任务和所有参数下都优于其他方法？",
+          "answer": "证据不足：论文只报告两个虚构数据集和有限设置，不能推出普遍优越性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        }
+      ]
+    },
+    {
+      "paper_id": "paper02",
+      "factual": [
+        {
+          "question": "该方法的核心机制是什么？",
+          "answer": "置信门控记忆对原型状态进行加权检索，并在相似度与时效性不一致时抑制记忆残差。",
+          "pages": [
+            1
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "两个虚构测试集上的主要结果是什么？",
+          "answer": "PrismCache 在 RiverLoop-24/HarborMist-18 上分别取得 0.179/0.196 NMAE，平均延迟为 12.4 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "定义组件消融显示了什么？",
+          "answer": "移除置信门控后，NMAE 变为 0.196/0.214，延迟为 12.1 ms，说明无筛选记忆会损害这两个测试集上的误差。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        }
+      ],
+      "cross_section": {
+        "question": "数据划分、主结果和局限如何共同限定结论？",
+        "answer": "各方法使用相同虚构测试分区和输入历史，因此可在各自设置内解读主表与消融；但实验仅支持虚构流上的记忆门控效果，不能外推到真实医疗、金融或公共数据，且没有显著性检验。",
+        "pages": [
+          2
+        ],
+        "result": "pass"
+      },
+      "unanswerable": [
+        {
+          "question": "PrismCache 是否已经在真实部署环境中证明有效？",
+          "answer": "证据不足：论文没有提供真实部署或真实数据实验，不能据此确认现实有效性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        },
+        {
+          "question": "PrismCache 是否在所有任务和所有参数下都优于其他方法？",
+          "answer": "证据不足：论文只报告两个虚构数据集和有限设置，不能推出普遍优越性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        }
+      ]
+    },
+    {
+      "paper_id": "paper03",
+      "factual": [
+        {
+          "question": "该方法的核心机制是什么？",
+          "answer": "双尺度相位估计器生成周期坐标，并在相位分歧时调整状态更新强度。",
+          "pages": [
+            1
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "两个虚构测试集上的主要结果是什么？",
+          "answer": "TempoWeave 在 RiverLoop-24/HarborMist-18 上分别取得 0.187/0.203 NMAE，平均延迟为 10.6 ms；FixedGate 对应为 0.231/0.248 与 8.0 ms。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "定义组件消融显示了什么？",
+          "answer": "移除周期编码后，NMAE 变为 0.211/0.225，延迟为 10.2 ms，支持周期坐标在这两个虚构任务中的作用。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        }
+      ],
+      "cross_section": {
+        "question": "数据划分、主结果和局限如何共同限定结论？",
+        "answer": "各方法使用相同虚构测试分区和输入历史，因此可在各自设置内解读主表与消融；但结论仅覆盖虚构周期扰动，不足以证明任意真实周期或完全非周期场景有效，且没有显著性检验。",
+        "pages": [
+          2
+        ],
+        "result": "pass"
+      },
+      "unanswerable": [
+        {
+          "question": "TempoWeave 是否已经在真实部署环境中证明有效？",
+          "answer": "证据不足：论文没有提供真实部署或真实数据实验，不能据此确认现实有效性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        },
+        {
+          "question": "TempoWeave 是否在所有任务和所有参数下都优于其他方法？",
+          "answer": "证据不足：论文只报告两个虚构数据集和有限设置，不能推出普遍优越性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        }
+      ]
+    },
+    {
+      "paper_id": "paper04",
+      "factual": [
+        {
+          "question": "该方法的核心机制是什么？",
+          "answer": "自适应区域块共享边界草图，并联合优化重建误差与接缝一致性。",
+          "pages": [
+            1
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "两个虚构测试集上的主要结果是什么？",
+          "answer": "MosaicField 在 GridQuarry-32/CavernTone-20 上分别取得 31.4/30.8 dB PSNR，开销为 36.0/38.0 kb；UniformTile 为 28.6/27.9 dB 与 42.0/45.0 kb。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "定义组件消融显示了什么？",
+          "answer": "移除接缝损失后，PSNR 降为 30.1/29.5 dB，开销为 36.2/38.2 kb，支持边界约束对重建质量的贡献。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        }
+      ],
+      "cross_section": {
+        "question": "数据划分、主结果和局限如何共同限定结论？",
+        "answer": "各方法使用相同虚构测试分区和输入历史，因此可在各自设置内解读主表与消融；但虚构地图结果不能证明医学影像诊断、真实地理测绘或通用无损压缩有效，且没有显著性检验。",
+        "pages": [
+          2
+        ],
+        "result": "pass"
+      },
+      "unanswerable": [
+        {
+          "question": "MosaicField 是否已经在真实部署环境中证明有效？",
+          "answer": "证据不足：论文没有提供真实部署或真实数据实验，不能据此确认现实有效性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        },
+        {
+          "question": "MosaicField 是否在所有任务和所有参数下都优于其他方法？",
+          "answer": "证据不足：论文只报告两个虚构数据集和有限设置，不能推出普遍优越性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        }
+      ]
+    },
+    {
+      "paper_id": "paper05",
+      "factual": [
+        {
+          "question": "该方法的核心机制是什么？",
+          "answer": "各视角轨迹通过可见性掩码投票更新共享对齐令牌，缺失关键点不参与同步损失。",
+          "pages": [
+            1
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "两个虚构测试集上的主要结果是什么？",
+          "answer": "ChorusLens 在两个测试集上的视角一致性误差为 0.173/0.189，同步 F1 为 0.887/0.871；IndependentPose 的误差为 0.248/0.271，F1 为 0.812/0.788。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "定义组件消融显示了什么？",
+          "answer": "移除共享对齐令牌后，误差变为 0.221/0.239，F1 变为 0.846/0.825，两个指标均弱于完整方法。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        }
+      ],
+      "cross_section": {
+        "question": "数据划分、主结果和局限如何共同限定结论？",
+        "answer": "各方法使用相同虚构测试分区和输入历史，因此可在各自设置内解读主表与消融；但合成手势不包含真实身份或真实人体采集数据，不能据此主张身份识别或任意遮挡条件下的可靠性，且没有显著性检验。",
+        "pages": [
+          2
+        ],
+        "result": "pass"
+      },
+      "unanswerable": [
+        {
+          "question": "ChorusLens 是否已经在真实部署环境中证明有效？",
+          "answer": "证据不足：论文没有提供真实部署或真实数据实验，不能据此确认现实有效性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        },
+        {
+          "question": "ChorusLens 是否在所有任务和所有参数下都优于其他方法？",
+          "answer": "证据不足：论文只报告两个虚构数据集和有限设置，不能推出普遍优越性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        }
+      ]
+    },
+    {
+      "paper_id": "paper06",
+      "factual": [
+        {
+          "question": "该方法的核心机制是什么？",
+          "answer": "候选更新先经过合成稳定屏障检查，再投影到允许区域，仅在目标改善时接受。",
+          "pages": [
+            1
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "两个虚构测试集上的主要结果是什么？",
+          "answer": "DeltaPilot 在两个测试集上的违反率为 3.2%/3.8%，稳定步数为 58/63；FreeTune 为 8.7%/9.4% 与 74/81 步。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        },
+        {
+          "question": "定义组件消融显示了什么？",
+          "answer": "移除稳定屏障后，违反率升至 6.9%/7.5%，稳定步数变为 61/66，支持屏障在虚构任务中的约束作用。",
+          "pages": [
+            2
+          ],
+          "result": "pass"
+        }
+      ],
+      "cross_section": {
+        "question": "数据划分、主结果和局限如何共同限定结论？",
+        "answer": "各方法使用相同虚构测试分区和输入历史，因此可在各自设置内解读主表与消融；但结果不构成真实反应堆、机器人或一般非线性系统的安全证明，也不能替代形式化验证，且没有显著性检验。",
+        "pages": [
+          2
+        ],
+        "result": "pass"
+      },
+      "unanswerable": [
+        {
+          "question": "DeltaPilot 是否已经在真实部署环境中证明有效？",
+          "answer": "证据不足：论文没有提供真实部署或真实数据实验，不能据此确认现实有效性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        },
+        {
+          "question": "DeltaPilot 是否在所有任务和所有参数下都优于其他方法？",
+          "answer": "证据不足：论文只报告两个虚构数据集和有限设置，不能推出普遍优越性。",
+          "result": "pass",
+          "evidence_status": "insufficient_evidence"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{"paper_id": "paper01", "pdf": "assets/examples/papers/paper01.pdf", "expected_status": "ok", "feature": "原创双栏论文、状态路由公式、算法、多数据集结果表与附录", "note_expected": true, "kind": "synthetic_test_data"}
+{"paper_id": "paper02", "pdf": "assets/examples/papers/paper02.pdf", "expected_status": "ok", "feature": "原创双栏论文、置信门控记忆公式、算法、多数据集表格与附录", "note_expected": true, "kind": "synthetic_test_data"}
+{"paper_id": "paper03", "pdf": "assets/examples/papers/paper03.pdf", "expected_status": "ok", "feature": "原创双栏论文、周期自适应公式、算法、多数据集实验与附录", "note_expected": true, "kind": "synthetic_test_data"}
+{"paper_id": "paper04", "pdf": "assets/examples/papers/paper04.pdf", "expected_status": "ok", "feature": "原创双栏论文、区域一致性压缩公式、算法、两个虚构地图数据集与附录", "note_expected": true, "kind": "synthetic_test_data"}
+{"paper_id": "paper05", "pdf": "assets/examples/papers/paper05.pdf", "expected_status": "ok", "feature": "原创长一些的双栏论文、多视角对齐公式、算法、多数据集与扩展附录", "note_expected": true, "kind": "synthetic_test_data"}
+{"paper_id": "paper06", "pdf": "assets/examples/papers/paper06.pdf", "expected_status": "ok", "feature": "原创双栏论文、稳定约束公式、调参算法、两个虚构控制数据集与附录", "note_expected": true, "kind": "synthetic_test_data"}
+{"paper_id": "paper07", "pdf": "assets/examples/papers/paper07.pdf", "expected_status": "ok", "kind": "synthetic", "feature": "非标准章节结构，验证页级降级", "note_expected": false}
+{"paper_id": "paper08", "pdf": "assets/examples/papers/paper08.pdf", "expected_status": "insufficient_text", "kind": "synthetic", "feature": "无文本层扫描件，验证停止生成完整笔记", "note_expected": false}
