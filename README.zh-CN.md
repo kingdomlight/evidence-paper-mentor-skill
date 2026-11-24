@@ -79,7 +79,7 @@ python -m pip install -r scripts/requirements.txt
 python scripts/paper_tools.py inspect assets/examples/papers/paper01.pdf --output /tmp/inspect.json
 ```
 
-输出的 `status` 为 `ok` 即表示环境正常。
+输出的 `status` 为 `ok` 即表示环境正常，就可以正常使用了。
 
 ## 工作原理
 
