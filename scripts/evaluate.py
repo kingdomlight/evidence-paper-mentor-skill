@@ -108,7 +108,12 @@ def run_evaluation(cases_path, output_dir):
 def check_skill(root):
     root = Path(root).resolve()
     # 主办方按提交包中的全部文件计数和计量，缓存文件也不得排除。
-    files = sorted(path for path in root.rglob("*") if path.is_file())
+    git_dir = root / ".git"
+    files = sorted(
+        path
+        for path in root.rglob("*")
+        if path.is_file() and not (git_dir in path.parents)
+    )
     size = sum(path.stat().st_size for path in files)
     missing = [name for name in REQUIRED if not (root / name).is_file()]
     invalid_data_files = []

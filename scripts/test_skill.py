@@ -259,11 +259,19 @@ class ExportAndPackageTests(unittest.TestCase):
             self.assertEqual(cached_result['size_bytes'], 5)
             self.assertEqual(cached_result['counting_scope'], 'all_files_including_caches')
 
+            (cache / 'stale.pyc').unlink()
+            cache.rmdir()
+            git_dir = root / '.git'
+            git_dir.mkdir()
+            (git_dir / 'HEAD').write_text('ref: refs/heads/main\n', encoding='utf-8')
+            git_result = check_skill(root)
+            self.assertEqual(git_result['file_count'], 0)
+
     def test_current_skill_has_required_files(self):
         result = check_skill(SCRIPTS.parent)
         self.assertTrue(result['valid'], result)
         self.assertTrue(result['approximately_25_files'])
-        self.assertEqual(result['file_count'], 24)
+        self.assertEqual(result['file_count'], 30)
         self.assertTrue(result['within_40_mib'])
 
 class CliAndEvaluationTests(unittest.TestCase):
